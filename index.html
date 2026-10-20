@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Routine & Schedule Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+
+    /* 10 Custom Aesthetic Themes */
+    .theme-dark-glass {
+      --bg-base: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+    }
+    .theme-amoled {
+      --bg-base: #000000;
+      --bg-card: #121212;
+      --bg-card-border: #282828;
+      --text-main: #ffffff;
+      --text-muted: #888888;
+      --accent: #10b981;
+      --accent-hover: #059669;
+    }
+    .theme-nord {
+      --bg-base: #2e3440;
+      --bg-card: #3b4252;
+      --bg-card-border: #434c5e;
+      --text-main: #eceff4;
+      --text-muted: #d8dee9;
+      --accent: #88c0d0;
+      --accent-hover: #81a1c1;
+    }
+    .theme-autumn {
+      --bg-base: #1c1917;
+      --bg-card: #292524;
+      --bg-card-border: #44403c;
+      --text-main: #f5f5f4;
+      --text-muted: #a8a29e;
+      --accent: #f97316;
+      --accent-hover: #ea580c;
+    }
+    .theme-cyberpunk {
+      --bg-base: #090014;
+      --bg-card: rgba(26, 10, 46, 0.8);
+      --bg-card-border: #ff007f;
+      --text-main: #00f0ff;
+      --text-muted: #b967ff;
+      --accent: #ff007f;
+      --accent-hover: #d10068;
+    }
+    .theme-emerald {
+      --bg-base: #022c22;
+      --bg-card: rgba(6, 78, 59, 0.7);
+      --bg-card-border: rgba(52, 211, 153, 0.2);
+      --text-main: #ecfdf5;
+      --text-muted: #6ee7b7;
+      --accent: #10b981;
+      --accent-hover: #059669;
+    }
+    .theme-purple {
+      --bg-base: #1e1b4b;
+      --bg-card: rgba(49, 46, 129, 0.7);
+      --bg-card-border: rgba(165, 180, 252, 0.2);
+      --text-main: #eef2ff;
+      --text-muted: #a5b4fc;
+      --accent: #818cf8;
+      --accent-hover: #6366f1;
+    }
+    .theme-sunset {
+      --bg-base: #2d1215;
+      --bg-card: rgba(67, 20, 28, 0.75);
+      --bg-card-border: rgba(251, 113, 133, 0.2);
+      --text-main: #fff1f2;
+      --text-muted: #fda4af;
+      --accent: #f43f5e;
+      --accent-hover: #e11d48;
+    }
+    .theme-ocean {
+      --bg-base: #031b33;
+      --bg-card: rgba(10, 46, 80, 0.75);
+      --bg-card-border: rgba(56, 189, 248, 0.25);
+      --text-main: #f0f9ff;
+      --text-muted: #7dd3fc;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+    }
+    .theme-light {
+      --bg-base: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="h-full theme-dark-glass" x-data="routineApp()" x-init="initApp()" :class="'theme-' + currentTheme">
+
+  <!-- Main Container -->
+  <div class="min-h-full flex flex-col">
+    
+    <!-- Header Nav -->
+    <header class="glass-card sticky top-0 z-40 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-md">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 rounded-xl bg-sky-500/20 text-sky-400">
+          <i data-lucide="clock" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">Routine & Schedule Portal</h1>
+          <p class="text-xs text-slate-400" x-text="currentTimeStr + ' • ' + currentDateStr"></p>
+        </div>
+      </div>
+
+      <!-- External Links & Header Actions -->
+      <div class="flex items-center space-x-3 flex-wrap gap-2">
+        
+        <!-- Link to 10krijgen Portal -->
+        <a href="https://154143-stack.github.io/10krijgen-/" target="_blank" rel="noopener noreferrer" 
+           class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 font-medium text-xs flex items-center space-x-2 transition shadow-sm">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+          <span>10krijgen Portal</span>
+        </a>
+
+        <!-- Focus HUD Button -->
+        <button @click="toggleFocusMode()" class="px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs flex items-center space-x-2 transition shadow-lg shadow-sky-500/20">
+          <i data-lucide="maximize-2" class="w-4 h-4"></i>
+          <span>Focus HUD</span>
+        </button>
+
+        <!-- Export .ics Calendar -->
+        <button @click="exportCalendar()" class="px-3 py-2 rounded-xl glass-card hover:bg-white/10 text-xs font-medium flex items-center space-x-1.5 transition">
+          <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i>
+          <span>Export .ics</span>
+        </button>
+
+        <!-- Theme Selector (10 Themes) -->
+        <select x-model="currentTheme" @change="saveSettings()" class="glass-card px-3 py-2 rounded-xl text-xs font-medium bg-transparent cursor-pointer outline-none">
+          <option value="dark-glass" class="bg-slate-900 text-white">Dark Glass</option>
+          <option value="amoled" class="bg-black text-white">AMOLED Pitch Black</option>
+          <option value="nord" class="bg-slate-800 text-white">Nord Slate</option>
+          <option value="autumn" class="bg-stone-900 text-white">Warm Autumn</option>
+          <option value="cyberpunk" class="bg-purple-950 text-cyan-400">Cyberpunk Neon</option>
+          <option value="emerald" class="bg-emerald-950 text-emerald-200">Emerald Forest</option>
+          <option value="purple" class="bg-indigo-950 text-indigo-200">Midnight Purple</option>
+          <option value="sunset" class="bg-rose-950 text-rose-200">Sunset Orange</option>
+          <option value="ocean" class="bg-sky-950 text-sky-200">Deep Ocean</option>
+          <option value="light" class="bg-slate-100 text-slate-900">Clean Light Mode</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left 2 Cols: Schedule Timeline & Timer -->
+      <section class="lg:col-span-2 space-y-6">
+
+        <!-- Active Block Banner -->
+        <div x-show="activeBlock" class="glass-card rounded-2xl p-6 border-l-4 border-l-sky-500 shadow-xl relative overflow-hidden">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-400 mb-2">
+                <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse mr-1.5"></span>
+                CURRENTLY ACTIVE
+              </span>
+              <h2 class="text-2xl font-bold" x-text="activeBlock ? activeBlock.title : ''"></h2>
+              <p class="text-sm text-slate-400 mt-1" x-text="activeBlock ? (activeBlock.startTime + ' - ' + activeBlock.endTime) : ''"></p>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+              <button @click="shiftSchedule(-15)" class="px-3 py-1.5 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition" title="Shift schedule back 15m">
+                -15m
+              </button>
+              <button @click="shiftSchedule(15)" class="px-3 py-1.5 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition" title="Shift schedule forward 15m">
+                +15m
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-4">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span x-text="blockProgressPercent + '% completed'"></span>
+              <span x-text="blockTimeRemainingStr + ' remaining'"></span>
+            </div>
+            <div class="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+              <div class="bg-sky-400 h-2 rounded-full transition-all duration-1000" :style="'width: ' + blockProgressPercent + '%'"></div>
+            </div>
+          </div>
+
+          <!-- Active Block Tasks -->
+          <template x-if="activeBlock && activeBlock.tasks && activeBlock.tasks.length > 0">
+            <div class="mt-5 pt-4 border-t border-white/10">
+              <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Block Checklist</h4>
+              <div class="space-y-2">
+                <template x-for="(task, index) in activeBlock.tasks" :key="index">
+                  <div class="flex items-center justify-between group">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                      <input type="checkbox" :checked="task.completed" @change="toggleTask(activeBlock.id, index)" class="w-4 h-4 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-600">
+                      <span :class="task.completed ? 'line-through text-slate-500' : 'text-sm text-slate-200 group-hover:text-white'" x-text="task.text"></span>
+                    </label>
+                    <button @click="deleteTask(activeBlock, index)" class="p-1 text-slate-500 hover:text-red-400 transition opacity-0 group-hover:opacity-100" title="Delete Task">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Pomodoro / Study Focus Timer Widget -->
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center space-x-2">
+              <i data-lucide="timer" class="w-5 h-5 text-sky-400"></i>
+              <span>Focus & Study Timer</span>
+            </h3>
+            <span class="text-xs px-2.5 py-1 rounded-full font-mono font-medium" 
+                  :class="timerMode === 'work' ? 'bg-sky-500/20 text-sky-400' : 'bg-emerald-500/20 text-emerald-400'"
+                  x-text="timerMode === 'work' ? 'FOCUS SESSION' : 'BREAK TIME'"></span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            
+            <!-- Circular Countdown Ring -->
+            <div class="relative w-44 h-44 mx-auto flex items-center justify-center">
+              <svg class="w-full h-full transform -rotate-90">
+                <circle cx="88" cy="88" r="76" stroke="currentColor" stroke-width="8" class="text-slate-700/40" fill="transparent" />
+                <circle cx="88" cy="88" r="76" stroke="currentColor" stroke-width="8" class="text-sky-400 transition-all duration-1000" 
+                        fill="transparent" 
+                        :stroke-dasharray="2 * Math.PI * 76" 
+                        :stroke-dashoffset="(2 * Math.PI * 76) * (1 - (timerPercent / 100))" 
+                        stroke-linecap="round" />
+              </svg>
+              <div class="absolute flex flex-col items-center">
+                <span class="text-3xl font-mono font-bold" x-text="timerDisplayStr"></span>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-0.5" x-text="timerIsRunning ? 'Running' : 'Paused'"></span>
+              </div>
+            </div>
+
+            <!-- Timer Controls & Presets -->
+            <div class="space-y-4">
+              <div class="flex items-center space-x-2">
+                <button @click="setTimerPreset(25, 'work')" class="flex-1 py-1.5 rounded-lg text-xs font-medium transition glass-card hover:bg-white/10" :class="timerDuration === 1500 && timerMode === 'work' ? 'border-sky-400 text-sky-400' : ''">25m Study</button>
+                <button @click="setTimerPreset(5, 'break')" class="flex-1 py-1.5 rounded-lg text-xs font-medium transition glass-card hover:bg-white/10" :class="timerDuration === 300 && timerMode === 'break' ? 'border-emerald-400 text-emerald-400' : ''">5m Break</button>
+                <button @click="setTimerPreset(15, 'break')" class="flex-1 py-1.5 rounded-lg text-xs font-medium transition glass-card hover:bg-white/10" :class="timerDuration === 900 && timerMode === 'break' ? 'border-emerald-400 text-emerald-400' : ''">15m Break</button>
+              </div>
+
+              <div class="flex items-center space-x-3">
+                <button @click="toggleTimer()" class="flex-1 py-2.5 rounded-xl font-medium text-sm flex items-center justify-center space-x-2 text-white shadow-lg transition" :class="timerIsRunning ? 'bg-amber-500 hover:bg-amber-600' : 'bg-sky-500 hover:bg-sky-600'">
+                  <i :data-lucide="timerIsRunning ? 'pause' : 'play'" class="w-4 h-4"></i>
+                  <span x-text="timerIsRunning ? 'Pause' : 'Start Timer'"></span>
+                </button>
+                
+                <button @click="resetTimer()" class="p-2.5 rounded-xl glass-card hover:bg-white/10 text-slate-400 hover:text-white transition" title="Reset Timer">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Day Selector Tabs -->
+        <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+          <template x-for="(day, idx) in daysOfWeek" :key="day">
+            <button 
+              @click="selectedDayIdx = idx" 
+              :class="selectedDayIdx === idx ? 'bg-sky-500 text-white' : 'glass-card text-slate-400 hover:text-white'"
+              class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap flex items-center space-x-2">
+              <span x-text="day"></span>
+              <span x-show="currentDayIdx === idx" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            </button>
+          </template>
+        </div>
+
+        <!-- Timeline Block List with Drag-and-Drop & Move Controls -->
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-bold flex items-center space-x-2">
+              <i data-lucide="list-todo" class="w-5 h-5 text-sky-400"></i>
+              <span x-text="daysOfWeek[selectedDayIdx] + ' Schedule'"></span>
+            </h3>
+            <button @click="addNewBlock()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium transition flex items-center space-x-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Add Block</span>
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <template x-for="(block, bIdx) in schedules[selectedDayIdx]" :key="block.id">
+              <div class="p-4 rounded-xl border transition-all duration-200 cursor-grab active:cursor-grabbing" 
+                   draggable="true"
+                   @dragstart="onDragStart(bIdx)"
+                   @dragover.prevent
+                   @drop="onDrop(bIdx)"
+                   :class="isCurrentBlock(block) ? 'border-sky-500 bg-sky-500/10' : 'border-white/5 hover:border-white/20 glass-card'">
+                
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                  <div class="flex items-center space-x-2">
+                    
+                    <!-- Move Up / Move Down Buttons -->
+                    <div class="flex flex-col space-y-0.5">
+                      <button @click="moveBlock(bIdx, -1)" :disabled="bIdx === 0" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Up">
+                        <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button @click="moveBlock(bIdx, 1)" :disabled="bIdx === schedules[selectedDayIdx].length - 1" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Down">
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+
+                    <!-- Time Inputs -->
+                    <input type="time" x-model="block.startTime" @change="saveSchedules()" class="bg-transparent border-b border-slate-600 text-xs text-slate-300 font-mono outline-none">
+                    <span class="text-xs text-slate-500">-</span>
+                    <input type="time" x-model="block.endTime" @change="saveSchedules()" class="bg-transparent border-b border-slate-600 text-xs text-slate-300 font-mono outline-none">
+                    
+                    <!-- Title Input -->
+                    <input type="text" x-model="block.title" @change="saveSchedules()" class="font-medium text-sm bg-transparent border-b border-transparent hover:border-slate-600 focus:border-sky-400 outline-none px-1">
+                  </div>
+
+                  <div class="flex items-center space-x-2">
+                    <button @click="addTaskToBlock(block)" class="p-1.5 text-slate-400 hover:text-sky-400 transition" title="Add Sub-task">
+                      <i data-lucide="check-square" class="w-4 h-4"></i>
+                    </button>
+                    <button @click="deleteBlock(selectedDayIdx, bIdx)" class="p-1.5 text-slate-400 hover:text-red-400 transition" title="Delete Block">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Sub-tasks -->
+                <template x-if="block.tasks && block.tasks.length > 0">
+                  <div class="mt-3 pl-4 space-y-1.5 border-l-2 border-slate-700">
+                    <template x-for="(task, tIdx) in block.tasks" :key="tIdx">
+                      <div class="flex items-center justify-between group">
+                        <label class="flex items-center space-x-2 cursor-pointer text-xs flex-1">
+                          <input type="checkbox" :checked="task.completed" @change="toggleTask(block.id, tIdx)" class="rounded border-slate-700 bg-slate-800 text-sky-500">
+                          <input type="text" x-model="task.text" @change="saveSchedules()" class="bg-transparent outline-none flex-1" :class="task.completed ? 'line-through text-slate-500' : 'text-slate-300'">
+                        </label>
+                        <button @click="deleteTask(block, tIdx)" class="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-1" title="Remove Task">
+                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+
+              </div>
+            </template>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Col: Procedural Audio & Settings -->
+      <section class="space-y-6">
+
+        <!-- Nature Sound Generator -->
+        <div class="glass-card rounded-2xl p-6 space-y-5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center space-x-2">
+              <i data-lucide="waves" class="w-5 h-5 text-sky-400"></i>
+              <span>Procedural Ambient Engine</span>
+            </h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono">Web Audio</span>
+          </div>
+
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Multi-layered physical sound synthesis. Zero audio clips required.
+          </p>
+
+          <!-- Audio Controls Grid -->
+          <div class="space-y-4">
+            
+            <!-- Rain & Thunder -->
+            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i data-lucide="cloud-rain" class="w-5 h-5 text-sky-400"></i>
+                <div>
+                  <div class="text-sm font-medium">Rain & Thunder</div>
+                  <div class="text-[10px] text-slate-400">Filtered pink noise + rumble</div>
+                </div>
+              </div>
+              <button @click="toggleSound('rain')" class="p-2 rounded-xl transition" :class="activeSounds.rain ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
+                <i :data-lucide="activeSounds.rain ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Ocean Waves -->
+            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i data-lucide="waves" class="w-5 h-5 text-teal-400"></i>
+                <div>
+                  <div class="text-sm font-medium">Ocean Surf</div>
+                  <div class="text-[10px] text-slate-400">LFO oscillating swell generator</div>
+                </div>
+              </div>
+              <button @click="toggleSound('ocean')" class="p-2 rounded-xl transition" :class="activeSounds.ocean ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
+                <i :data-lucide="activeSounds.ocean ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Forest Wind -->
+            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i data-lucide="wind" class="w-5 h-5 text-indigo-400"></i>
+                <div>
+                  <div class="text-sm font-medium">Forest Wind</div>
+                  <div class="text-[10px] text-slate-400">Resonant bandpass turbulence</div>
+                </div>
+              </div>
+              <button @click="toggleSound('wind')" class="p-2 rounded-xl transition" :class="activeSounds.wind ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
+                <i :data-lucide="activeSounds.wind ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Stream & Birds -->
+            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i data-lucide="trees" class="w-5 h-5 text-emerald-400"></i>
+                <div>
+                  <div class="text-sm font-medium">Stream & Birds</div>
+                  <div class="text-[10px] text-slate-400">Water turbulence + FM synth chirps</div>
+                </div>
+              </div>
+              <button @click="toggleSound('stream')" class="p-2 rounded-xl transition" :class="activeSounds.stream ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
+                <i :data-lucide="activeSounds.stream ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Volume Slider -->
+          <div class="pt-2">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span>Master Ambient Volume</span>
+              <span x-text="Math.round(masterVolume * 100) + '%'"></span>
+            </div>
+            <input type="range" min="0" max="1" step="0.01" x-model="masterVolume" @input="updateMasterVolume()" class="w-full accent-sky-400 bg-slate-700 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+        </div>
+
+        <!-- Transition Chime Alert Card -->
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold flex items-center space-x-2">
+              <i data-lucide="bell" class="w-4 h-4 text-sky-400"></i>
+              <span>Transition Audio Chimes</span>
+            </h3>
+            <input type="checkbox" x-model="chimesEnabled" @change="saveSettings()" class="rounded border-slate-700 bg-slate-800 text-sky-500 w-4 h-4">
+          </div>
+          <p class="text-xs text-slate-400">
+            Plays a synthesized chime at block completion and timer events.
+          </p>
+          <button @click="playChime(523.25, 'sine')" class="w-full py-2 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition">
+            Test Transition Chime
+          </button>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Fullscreen Focus HUD Overlay -->
+    <div x-show="focusMode" x-cloak class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between p-12 transition-all duration-300">
+      
+      <!-- Top HUD Bar -->
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div class="w-3 h-3 rounded-full bg-sky-400 animate-ping"></div>
+          <span class="text-sm font-mono text-slate-400 uppercase tracking-widest" x-text="currentDateStr"></span>
+        </div>
+        
+        <button @click="toggleFocusMode()" class="px-4 py-2 rounded-xl glass-card hover:bg-white/10 text-slate-300 text-xs font-medium flex items-center space-x-2 transition">
+          <i data-lucide="minimize-2" class="w-4 h-4"></i>
+          <span>Exit HUD</span>
+        </button>
+      </div>
+
+      <!-- Main Central HUD Block -->
+      <div class="max-w-2xl mx-auto w-full text-center space-y-8 my-auto">
+        
+        <div class="space-y-2">
+          <span class="text-xs font-semibold text-sky-400 tracking-widest uppercase" x-text="activeBlock ? (activeBlock.startTime + ' - ' + activeBlock.endTime) : 'NO ACTIVE BLOCK'"></span>
+          <h1 class="text-5xl font-black tracking-tight" x-text="activeBlock ? activeBlock.title : 'Free Time'"></h1>
+        </div>
+
+        <!-- Big Countdown Ring -->
+        <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent" />
+            <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-sky-400 transition-all duration-1000" 
+                    fill="transparent" 
+                    :stroke-dasharray="2 * Math.PI * 110" 
+                    :stroke-dashoffset="(2 * Math.PI * 110) * (1 - (blockProgressPercent / 100))" 
+                    stroke-linecap="round" />
+          </svg>
+          <div class="absolute flex flex-col items-center">
+            <span class="text-4xl font-mono font-bold" x-text="blockTimeRemainingStr"></span>
+            <span class="text-xs text-slate-400 mt-1">Remaining</span>
+          </div>
+        </div>
+
+        <!-- HUD Tasks -->
+        <template x-if="activeBlock && activeBlock.tasks && activeBlock.tasks.length > 0">
+          <div class="max-w-md mx-auto space-y-2 text-left bg-slate-900/60 p-6 rounded-2xl border border-white/5 backdrop-blur">
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Tasks to Complete</h4>
+            <template x-for="(task, index) in activeBlock.tasks" :key="index">
+              <label class="flex items-center space-x-3 cursor-pointer py-1">
+                <input type="checkbox" :checked="task.completed" @change="toggleTask(activeBlock.id, index)" class="w-5 h-5 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-700">
+                <span :class="task.completed ? 'line-through text-slate-500' : 'text-slate-200'" class="text-base" x-text="task.text"></span>
+              </label>
+            </template>
+          </div>
+        </template>
+
+      </div>
+
+      <!-- Bottom Audio Controls in Focus Mode -->
+      <div class="flex items-center justify-between max-w-xl mx-auto w-full glass-card p-4 rounded-2xl">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="waves" class="w-5 h-5 text-sky-400"></i>
+          <span class="text-xs font-medium">Ambient Focus Sound</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button @click="toggleSound('rain')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.rain ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Rain</button>
+          <button @click="toggleSound('ocean')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.ocean ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Ocean</button>
+          <button @click="toggleSound('wind')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.wind ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Wind</button>
+          <button @click="toggleSound('stream')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.stream ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Stream</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function routineApp() {
+      return {
+        // App State
+        currentTheme: 'dark-glass',
+        focusMode: false,
+        currentTimeStr: '',
+        currentDateStr: '',
+        currentDayIdx: 0,
+        selectedDayIdx: 0,
+        daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        
+        // Active Block Calculations
+        activeBlock: null,
+        blockProgressPercent: 0,
+        blockTimeRemainingStr: '00:00',
+
+        // Drag and Drop Dragging Index
+        draggedIdx: null,
+
+        // Timer State (Pomodoro)
+        timerDuration: 1500, // 25 min
+        timerRemaining: 1500,
+        timerMode: 'work',
+        timerIsRunning: false,
+        timerInterval: null,
+
+        // Settings
+        chimesEnabled: true,
+        masterVolume: 0.6,
+
+        // Schedules Storage
+        schedules: [
+          // Mon
+          [
+            { id: 1, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [{ text: 'Attend classes', completed: false }] },
+            { id: 2, startTime: '15:30', endTime: '17:00', title: 'Study & Homework Block', tasks: [{ text: 'Review coursework', completed: false }] },
+            { id: 3, startTime: '17:00', endTime: '18:00', title: 'Exercise / Walk', tasks: [] },
+            { id: 4, startTime: '19:00', endTime: '21:00', title: 'Personal Coding / Projects', tasks: [] }
+          ],
+          // Tue
+          [
+            { id: 5, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] },
+            { id: 6, startTime: '15:30', endTime: '17:00', title: 'Assignments & Practice', tasks: [] }
+          ],
+          // Wed
+          [{ id: 7, startTime: '08:00', endTime: '14:00', title: 'School Routine', tasks: [] }],
+          // Thu
+          [{ id: 8, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
+          // Fri
+          [{ id: 9, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
+          // Sat
+          [{ id: 10, startTime: '10:00', endTime: '12:00', title: 'Weekly Review & Planning', tasks: [] }],
+          // Sun
+          [{ id: 11, startTime: '11:00', endTime: '13:00', title: 'Relaxation & Reading', tasks: [] }]
+        ],
+
+        // Web Audio Procedural Sound Engine
+        audioCtx: null,
+        masterGain: null,
+        activeSounds: {
+          rain: false,
+          ocean: false,
+          wind: false,
+          stream: false
+        },
+        soundNodes: {},
+
+        initApp() {
+          this.loadSavedData();
+          this.updateTime();
+          setInterval(() => this.updateTime(), 1000);
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        updateTime() {
+          const now = new Date();
+          this.currentTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          this.currentDateStr = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+          
+          const jsDay = now.getDay();
+          this.currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
+
+          this.calculateActiveBlock(now);
+        },
+
+        calculateActiveBlock(now) {
+          const currentDaySchedules = this.schedules[this.currentDayIdx] || [];
+          const nowMins = now.getHours() * 60 + now.getMinutes();
+          const nowSecs = nowMins * 60 + now.getSeconds();
+
+          let found = null;
+
+          for (let block of currentDaySchedules) {
+            const [sH, sM] = block.startTime.split(':').map(Number);
+            const [eH, eM] = block.endTime.split(':').map(Number);
+            const startMins = sH * 60 + sM;
+            const endMins = eH * 60 + eM;
+
+            if (nowMins >= startMins && nowMins < endMins) {
+              found = block;
+              
+              const totalSecs = (endMins - startMins) * 60;
+              const elapsedSecs = nowSecs - (startMins * 60);
+              this.blockProgressPercent = Math.min(100, Math.max(0, Math.round((elapsedSecs / totalSecs) * 100)));
+
+              const remSecs = (endMins * 60) - nowSecs;
+              const remM = Math.floor(remSecs / 60);
+              const remS = remSecs % 60;
+              this.blockTimeRemainingStr = `${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`;
+
+              break;
+            }
+          }
+
+          this.activeBlock = found;
+        },
+
+        isCurrentBlock(block) {
+          return this.activeBlock && this.activeBlock.id === block.id;
+        },
+
+        shiftSchedule(mins) {
+          if (!this.schedules[this.selectedDayIdx]) return;
+          
+          this.schedules[this.selectedDayIdx].forEach(b => {
+            b.startTime = this.addMinutesToTimeStr(b.startTime, mins);
+            b.endTime = this.addMinutesToTimeStr(b.endTime, mins);
+          });
+
+          this.saveSchedules();
+        },
+
+        addMinutesToTimeStr(timeStr, minsToAdd) {
+          const [h, m] = timeStr.split(':').map(Number);
+          let date = new Date();
+          date.setHours(h, m + minsToAdd, 0);
+          return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        },
+
+        // --- BLOCK REORDERING & DRAG & DROP ---
+        moveBlock(bIdx, direction) {
+          const targetIdx = bIdx + direction;
+          if (targetIdx < 0 || targetIdx >= this.schedules[this.selectedDayIdx].length) return;
+          
+          const list = this.schedules[this.selectedDayIdx];
+          const temp = list[bIdx];
+          list[bIdx] = list[targetIdx];
+          list[targetIdx] = temp;
+          
+          this.saveSchedules();
+        },
+
+        onDragStart(bIdx) {
+          this.draggedIdx = bIdx;
+        },
+
+        onDrop(targetIdx) {
+          if (this.draggedIdx === null || this.draggedIdx === targetIdx) return;
+          
+          const list = this.schedules[this.selectedDayIdx];
+          const draggedItem = list.splice(this.draggedIdx, 1)[0];
+          list.splice(targetIdx, 0, draggedItem);
+          
+          this.draggedIdx = null;
+          this.saveSchedules();
+        },
+
+        // --- TASK MANAGEMENT ---
+        toggleTask(blockId, taskIdx) {
+          for (let day of this.schedules) {
+            let block = day.find(b => b.id === blockId);
+            if (block && block.tasks[taskIdx]) {
+              block.tasks[taskIdx].completed = !block.tasks[taskIdx].completed;
+              break;
+            }
+          }
+          this.saveSchedules();
+        },
+
+        addNewBlock() {
+          const newId = Date.now();
+          this.schedules[this.selectedDayIdx].push({
+            id: newId,
+            startTime: '12:00',
+            endTime: '13:00',
+            title: 'New Time Block',
+            tasks: []
+          });
+          this.saveSchedules();
+        },
+
+        deleteBlock(dayIdx, blockIdx) {
+          this.schedules[dayIdx].splice(blockIdx, 1);
+          this.saveSchedules();
+        },
+
+        addTaskToBlock(block) {
+          if (!block.tasks) block.tasks = [];
+          block.tasks.push({ text: 'New task', completed: false });
+          this.saveSchedules();
+        },
+
+        deleteTask(block, tIdx) {
+          if (block && block.tasks) {
+            block.tasks.splice(tIdx, 1);
+            this.saveSchedules();
+          }
+        },
+
+        // --- STUDY TIMER SUITE ---
+        setTimerPreset(mins, mode) {
+          this.timerMode = mode;
+          this.timerDuration = mins * 60;
+          this.resetTimer();
+        },
+
+        toggleTimer() {
+          this.timerIsRunning = !this.timerIsRunning;
+          if (this.timerIsRunning) {
+            this.timerInterval = setInterval(() => {
+              if (this.timerRemaining > 0) {
+                this.timerRemaining--;
+              } else {
+                this.timerIsRunning = false;
+                clearInterval(this.timerInterval);
+                if (this.chimesEnabled) this.playChime(659.25, 'sine');
+              }
+            }, 1000);
+          } else {
+            clearInterval(this.timerInterval);
+          }
+        },
+
+        resetTimer() {
+          this.timerIsRunning = false;
+          clearInterval(this.timerInterval);
+          this.timerRemaining = this.timerDuration;
+        },
+
+        get timerPercent() {
+          return Math.round(((this.timerDuration - this.timerRemaining) / this.timerDuration) * 100);
+        },
+
+        get timerDisplayStr() {
+          const m = Math.floor(this.timerRemaining / 60);
+          const s = this.timerRemaining % 60;
+          return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        },
+
+        toggleFocusMode() {
+          this.focusMode = !this.focusMode;
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        // --- WEB AUDIO SYNTHESIS ENGINE ---
+        initAudio() {
+          if (!this.audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.audioCtx = new AudioContext();
+            this.masterGain = this.audioCtx.createGain();
+            this.masterGain.gain.setValueAtTime(this.masterVolume, this.audioCtx.currentTime);
+            this.masterGain.connect(this.audioCtx.destination);
+          }
+          if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+          }
+        },
+
+        updateMasterVolume() {
+          if (this.masterGain && this.audioCtx) {
+            this.masterGain.gain.setValueAtTime(this.masterVolume, this.audioCtx.currentTime);
+          }
+          this.saveSettings();
+        },
+
+        toggleSound(type) {
+          this.initAudio();
+          this.activeSounds[type] = !this.activeSounds[type];
+
+          if (this.activeSounds[type]) {
+            this.startProceduralSound(type);
+          } else {
+            this.stopProceduralSound(type);
+          }
+        },
+
+        startProceduralSound(type) {
+          const ctx = this.audioCtx;
+          
+          if (type === 'rain') {
+            const bufferSize = ctx.sampleRate * 2;
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              output[i] = Math.random() * 2 - 1;
+            }
+
+            const whiteNoise = ctx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, ctx.currentTime);
+
+            const highpass = ctx.createBiquadFilter();
+            highpass.type = 'highpass';
+            highpass.frequency.setValueAtTime(400, ctx.currentTime);
+
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+
+            whiteNoise.connect(filter);
+            filter.connect(highpass);
+            highpass.connect(gain);
+            gain.connect(this.masterGain);
+
+            whiteNoise.start();
+            this.soundNodes.rain = { source: whiteNoise, gain: gain };
+          }
+
+          else if (type === 'ocean') {
+            const bufferSize = ctx.sampleRate * 3;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            let lastOut = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+              let white = Math.random() * 2 - 1;
+              data[i] = (lastOut + (0.02 * white)) / 1.02;
+              lastOut = data[i];
+            }
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(400, ctx.currentTime);
+
+            const lfo = ctx.createOscillator();
+            lfo.frequency.setValueAtTime(0.12, ctx.currentTime);
+
+            const lfoGain = ctx.createGain();
+            lfoGain.gain.setValueAtTime(300, ctx.currentTime);
+
+            lfo.connect(filter.frequency);
+
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.masterGain);
+
+            noise.start();
+            lfo.start();
+            this.soundNodes.ocean = { source: noise, lfo: lfo, gain: gain };
+          }
+
+          else if (type === 'wind') {
+            const bufferSize = ctx.sampleRate * 2;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(350, ctx.currentTime);
+            filter.Q.setValueAtTime(3.0, ctx.currentTime);
+
+            const lfo = ctx.createOscillator();
+            lfo.frequency.setValueAtTime(0.2, ctx.currentTime);
+
+            const lfoGain = ctx.createGain();
+            lfoGain.gain.setValueAtTime(200, ctx.currentTime);
+
+            lfo.connect(filter.frequency);
+
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.masterGain);
+
+            noise.start();
+            lfo.start();
+            this.soundNodes.wind = { source: noise, lfo: lfo, gain: gain };
+          }
+
+          else if (type === 'stream') {
+            const bufferSize = ctx.sampleRate * 2;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(800, ctx.currentTime);
+            filter.Q.setValueAtTime(1.0, ctx.currentTime);
+
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.18, ctx.currentTime);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.masterGain);
+
+            noise.start();
+            this.soundNodes.stream = { source: noise, gain: gain };
+          }
+        },
+
+        stopProceduralSound(type) {
+          if (this.soundNodes[type]) {
+            if (this.soundNodes[type].source) this.soundNodes[type].source.stop();
+            if (this.soundNodes[type].lfo) this.soundNodes[type].lfo.stop();
+            delete this.soundNodes[type];
+          }
+        },
+
+        playChime(freq = 523.25, type = 'sine') {
+          this.initAudio();
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+
+          gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 1.5);
+
+          osc.connect(gain);
+          gain.connect(this.masterGain);
+
+          osc.start();
+          osc.stop(this.audioCtx.currentTime + 1.5);
+        },
+
+        exportCalendar() {
+          let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Routine Schedule Portal//EN\n";
+          
+          this.schedules.forEach((daySchedule) => {
+            daySchedule.forEach(block => {
+              icsContent += "BEGIN:VEVENT\n";
+              icsContent += `SUMMARY:${block.title}\n`;
+              icsContent += `DESCRIPTION:Routine Block\n`;
+              icsContent += "END:VEVENT\n";
+            });
+          });
+
+          icsContent += "END:VCALENDAR";
+
+          const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute('download', 'routine-schedule.ics');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        },
+
+        saveSchedules() {
+          localStorage.setItem('routine_portal_schedules', JSON.stringify(this.schedules));
+        },
+
+        saveSettings() {
+          localStorage.setItem('routine_portal_theme', this.currentTheme);
+          localStorage.setItem('routine_portal_chimes', JSON.stringify(this.chimesEnabled));
+          localStorage.setItem('routine_portal_volume', this.masterVolume);
+        },
+
+        loadSavedData() {
+          const savedSchedules = localStorage.getItem('routine_portal_schedules');
+          if (savedSchedules) this.schedules = JSON.parse(savedSchedules);
+
+          const savedTheme = localStorage.getItem('routine_portal_theme');
+          if (savedTheme) this.currentTheme = savedTheme;
+
+          const savedChimes = localStorage.getItem('routine_portal_chimes');
+          if (savedChimes !== null) this.chimesEnabled = JSON.parse(savedChimes);
+
+          const savedVol = localStorage.getItem('routine_portal_volume');
+          if (savedVol !== null) this.masterVolume = parseFloat(savedVol);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
