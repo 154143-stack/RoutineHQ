@@ -114,70 +114,88 @@
       border: 1px solid var(--bg-card-border);
       backdrop-filter: blur(12px);
     }
+
+    .drag-over-highlight {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
   </style>
 </head>
 <body class="h-full theme-dark-glass" x-data="routineApp()" x-init="initApp()" :class="'theme-' + currentTheme">
 
-  <!-- Main Container -->
   <div class="min-h-full flex flex-col">
     
-    <!-- Header Nav -->
+    <!-- Header Navigation -->
     <header class="glass-card sticky top-0 z-40 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-md">
       <div class="flex items-center space-x-3">
         <div class="p-2 rounded-xl bg-sky-500/20 text-sky-400">
           <i data-lucide="clock" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="text-xl font-bold tracking-tight">Routine & Schedule Portal</h1>
+          <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+            <span>Routine & Schedule Portal</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 font-mono">PRO</span>
+          </h1>
           <p class="text-xs text-slate-400" x-text="currentTimeStr + ' • ' + currentDateStr"></p>
         </div>
       </div>
 
-      <!-- Navigation Tabs (Schedule vs Pomodoro Timer) -->
-      <div class="flex items-center space-x-2 p-1 rounded-xl glass-card">
-        <button @click="activeMainTab = 'schedule'" 
-                :class="activeMainTab === 'schedule' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'"
-                class="px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-2">
+      <!-- Main Navigation Tabs -->
+      <div class="flex items-center space-x-1 p-1 rounded-xl glass-card">
+        <button @click="switchTab('schedule')" 
+                :class="activeMainTab === 'schedule' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
           <i data-lucide="calendar" class="w-4 h-4"></i>
-          <span>Schedule View</span>
+          <span>Schedule</span>
         </button>
-        <button @click="activeMainTab = 'pomodoro'" 
-                :class="activeMainTab === 'pomodoro' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'"
-                class="px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-2 relative">
+        <button @click="switchTab('pomodoro')" 
+                :class="activeMainTab === 'pomodoro' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 relative">
           <i data-lucide="timer" class="w-4 h-4"></i>
-          <span>Focus Timer</span>
+          <span>Timer</span>
           <span x-show="timerIsRunning" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse absolute top-1 right-1"></span>
+        </button>
+        <button @click="switchTab('analytics')" 
+                :class="activeMainTab === 'analytics' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span>Analytics</span>
         </button>
       </div>
 
-      <!-- External Links & Header Actions -->
-      <div class="flex items-center space-x-3 flex-wrap gap-2">
-        
-        <!-- Vacation Mode Toggle Button -->
-        <button @click="toggleVacationMode()" 
-                :class="isVacationMode ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'glass-card text-slate-400 hover:text-white'"
-                class="px-3.5 py-2 rounded-xl border font-medium text-xs flex items-center space-x-2 transition shadow-sm">
-          <i data-lucide="palmtree" class="w-4 h-4 text-amber-400"></i>
-          <span x-text="isVacationMode ? 'Vacation Mode ON 🏝️' : 'Vacation Mode'"></span>
-        </button>
+      <!-- Top Right Controls -->
+      <div class="flex items-center space-x-2 flex-wrap gap-2">
+        <!-- Routine Profile Selector -->
+        <div class="flex items-center space-x-1 glass-card px-2 py-1 rounded-xl">
+          <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-400"></i>
+          <select x-model="activeProfile" @change="switchProfile()" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer py-1 font-medium">
+            <option value="normal" class="bg-slate-900 text-white">Normal School Week</option>
+            <option value="exam" class="bg-slate-900 text-white">Exam Prep Week 📚</option>
+            <option value="holiday" class="bg-slate-900 text-white">Holiday / Vacation Mode 🏝️</option>
+          </select>
+        </div>
 
-        <!-- Link to 10krijgen Portal -->
+        <!-- External 10krijgen Link -->
         <a href="https://154143-stack.github.io/10krijgen-/" target="_blank" rel="noopener noreferrer" 
-           class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 font-medium text-xs flex items-center space-x-2 transition shadow-sm">
-          <i data-lucide="external-link" class="w-4 h-4"></i>
-          <span>10krijgen Portal</span>
+           class="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 font-medium text-xs flex items-center space-x-1.5 transition">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span>10krijgen</span>
         </a>
 
-        <!-- Focus HUD Button -->
-        <button @click="toggleFocusMode()" class="px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs flex items-center space-x-2 transition shadow-lg shadow-sky-500/20">
-          <i data-lucide="maximize-2" class="w-4 h-4"></i>
+        <!-- Focus HUD -->
+        <button @click="toggleFocusMode()" class="px-3 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs flex items-center space-x-1.5 transition shadow-lg shadow-sky-500/20">
+          <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
           <span>Focus HUD</span>
         </button>
 
-        <!-- Export .ics Calendar -->
-        <button @click="exportCalendar()" class="px-3 py-2 rounded-xl glass-card hover:bg-white/10 text-xs font-medium flex items-center space-x-1.5 transition">
-          <i data-lucide="calendar-plus" class="w-4 h-4 text-sky-400"></i>
-          <span>Export .ics</span>
+        <!-- Backup & Restore Data Modal Button -->
+        <button @click="showDataModal = true" class="p-2 rounded-xl glass-card hover:bg-white/10 text-slate-300 transition" title="Backup & Restore Data">
+          <i data-lucide="database" class="w-4 h-4 text-sky-400"></i>
+        </button>
+
+        <!-- Export Calendar .ics -->
+        <button @click="exportCalendar()" class="p-2 rounded-xl glass-card hover:bg-white/10 text-slate-300 transition" title="Export .ics Calendar">
+          <i data-lucide="calendar-plus" class="w-4 h-4 text-emerald-400"></i>
         </button>
 
         <!-- Theme Selector -->
@@ -196,39 +214,30 @@
       </div>
     </header>
 
-    <!-- Vacation Mode Banner Notice -->
-    <div x-show="isVacationMode" x-cloak class="bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border-b border-amber-500/30 px-6 py-2.5 flex items-center justify-between">
-      <div class="flex items-center space-x-2 text-xs text-amber-300 font-medium">
-        <i data-lucide="sun" class="w-4 h-4 text-amber-400 animate-spin-slow"></i>
-        <span>Vacation Mode Active: Relaxed holiday routine loaded. Enjoy your break!</span>
-      </div>
-      <button @click="toggleVacationMode()" class="text-xs text-amber-400 hover:underline">Switch to Normal Routine</button>
-    </div>
-
-    <!-- Main Content Area -->
+    <!-- Main Content Body -->
     <main class="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- Left 2 Cols: Dynamic Main View (Schedule OR Pomodoro) -->
+      <!-- Left 2 Columns -->
       <section class="lg:col-span-2 space-y-6">
 
         <!-- TAB 1: SCHEDULE VIEW -->
         <div x-show="activeMainTab === 'schedule'" class="space-y-6">
           
-          <!-- AI Conversational Scheduler -->
+          <!-- AI Conversational Scheduler Command Box -->
           <div class="glass-card rounded-2xl p-4 border border-sky-500/30 shadow-lg space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold text-sky-400 flex items-center space-x-1.5 uppercase tracking-wider">
                 <i data-lucide="sparkles" class="w-4 h-4"></i>
-                <span>AI Conversational Scheduler</span>
+                <span>AI Natural Language Command Bar</span>
               </span>
-              <span class="text-[10px] text-slate-400">Type naturally like: "Hey so on monday i have 8:30 - 15:20 school"</span>
+              <span class="text-[10px] text-slate-400">e.g. "On Thursday 14:00 - 15:30 Study Session with task solve exercise 4"</span>
             </div>
             <form @submit.prevent="processAiPrompt()" class="flex items-center space-x-2">
-              <input type="text" x-model="aiPromptInput" placeholder="e.g. Hey so on monday i have 8:30 - 15:20 school..." 
+              <input type="text" x-model="aiPromptInput" placeholder="Try typing: 'on monday i have 8:30 - 15:20 school'" 
                      class="flex-1 bg-slate-900/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-400">
               <button type="submit" class="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs transition shadow-md flex items-center space-x-1.5">
                 <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
-                <span>Send to AI</span>
+                <span>Parse</span>
               </button>
             </form>
           </div>
@@ -237,25 +246,27 @@
           <div x-show="activeBlock" class="glass-card rounded-2xl p-6 border-l-4 border-l-sky-500 shadow-xl relative overflow-hidden">
             <div class="flex items-start justify-between">
               <div>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-400 mb-2">
-                  <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse mr-1.5"></span>
-                  CURRENTLY ACTIVE
-                </span>
+                <div class="flex items-center space-x-2 mb-2">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-400">
+                    <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse mr-1.5"></span>
+                    ACTIVE BLOCK
+                  </span>
+                </div>
                 <h2 class="text-2xl font-bold" x-text="activeBlock ? activeBlock.title : ''"></h2>
                 <p class="text-sm text-slate-400 mt-1" x-text="activeBlock ? (activeBlock.startTime + ' - ' + activeBlock.endTime) : ''"></p>
               </div>
               
               <div class="flex items-center space-x-2">
-                <button @click="shiftSchedule(-15)" class="px-3 py-1.5 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition" title="Shift schedule back 15m">
+                <button @click="shiftSchedule(-15)" class="px-3 py-1.5 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition" title="Shift -15m">
                   -15m
                 </button>
-                <button @click="shiftSchedule(15)" class="px-3 py-1.5 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition" title="Shift schedule forward 15m">
+                <button @click="shiftSchedule(15)" class="px-3 py-1.5 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition" title="Shift +15m">
                   +15m
                 </button>
               </div>
             </div>
 
-            <!-- Progress Bar -->
+            <!-- Active Block Progress Bar -->
             <div class="mt-4">
               <div class="flex justify-between text-xs text-slate-400 mb-1">
                 <span x-text="blockProgressPercent + '% completed'"></span>
@@ -266,10 +277,10 @@
               </div>
             </div>
 
-            <!-- Active Block Tasks -->
+            <!-- Tasks for Active Block -->
             <template x-if="activeBlock && activeBlock.tasks && activeBlock.tasks.length > 0">
               <div class="mt-5 pt-4 border-t border-white/10">
-                <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Block Checklist</h4>
+                <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Block Tasks</h4>
                 <div class="space-y-2">
                   <template x-for="(task, index) in activeBlock.tasks" :key="index">
                     <div class="flex items-center justify-between group">
@@ -277,7 +288,7 @@
                         <input type="checkbox" :checked="task.completed" @change="toggleTask(activeBlock.id, index)" class="w-4 h-4 rounded text-sky-500 focus:ring-sky-400 bg-slate-800 border-slate-600">
                         <span :class="task.completed ? 'line-through text-slate-500' : 'text-sm text-slate-200 group-hover:text-white'" x-text="task.text"></span>
                       </label>
-                      <button @click="deleteTask(activeBlock, index)" class="p-1 text-slate-500 hover:text-red-400 transition opacity-0 group-hover:opacity-100" title="Delete Task">
+                      <button @click="deleteTask(activeBlock, index)" class="p-1 text-slate-500 hover:text-red-400 transition opacity-0 group-hover:opacity-100">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i>
                       </button>
                     </div>
@@ -287,12 +298,25 @@
             </template>
           </div>
 
-          <!-- Day Selector Tabs -->
+          <!-- Schedule Conflicts Alert Banner -->
+          <template x-if="detectedConflicts.length > 0">
+            <div class="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-4 flex items-start space-x-3 text-rose-300 text-xs">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+              <div class="space-y-1">
+                <span class="font-bold uppercase tracking-wider text-rose-400">Time Overlap Warning</span>
+                <template x-for="c in detectedConflicts" :key="c">
+                  <p x-text="c"></p>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <!-- Day Tabs -->
           <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
             <template x-for="(day, idx) in daysOfWeek" :key="day">
               <button 
                 @click="selectedDayIdx = idx" 
-                :class="selectedDayIdx === idx ? 'bg-sky-500 text-white' : 'glass-card text-slate-400 hover:text-white'"
+                :class="selectedDayIdx === idx ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'glass-card text-slate-400 hover:text-white'"
                 class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap flex items-center space-x-2">
                 <span x-text="day"></span>
                 <span x-show="currentDayIdx === idx" class="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -300,17 +324,17 @@
             </template>
           </div>
 
-          <!-- Timeline Block List with Manual Reordering & Delete Controls -->
+          <!-- Timeline Blocks List -->
           <div class="glass-card rounded-2xl p-6 space-y-4">
             <div class="flex items-center justify-between mb-2">
               <h3 class="text-lg font-bold flex items-center space-x-2">
                 <i data-lucide="list-todo" class="w-5 h-5 text-sky-400"></i>
-                <span x-text="daysOfWeek[selectedDayIdx] + (isVacationMode ? ' (Vacation Routine)' : ' Schedule')"></span>
+                <span x-text="daysOfWeek[selectedDayIdx] + ' Schedule (' + getProfileName() + ')'"></span>
               </h3>
               <div class="flex items-center space-x-2">
-                <button @click="sortCurrentDay()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-300 transition flex items-center space-x-1" title="Sort chronologically">
+                <button @click="sortCurrentDay()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-300 transition flex items-center space-x-1" title="Sort Chronologically">
                   <i data-lucide="arrow-down-up" class="w-3.5 h-3.5"></i>
-                  <span>Sort Time</span>
+                  <span>Auto-Sort</span>
                 </button>
                 <button @click="addNewBlock()" class="px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 text-xs font-medium transition flex items-center space-x-1">
                   <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -319,35 +343,53 @@
               </div>
             </div>
 
+            <!-- Block Items -->
             <div class="space-y-3">
               <template x-for="(block, bIdx) in activeScheduleSet[selectedDayIdx]" :key="block.id">
                 <div class="p-4 rounded-xl border transition-all duration-200" 
                      draggable="true"
                      @dragstart="onDragStart(bIdx)"
-                     @dragover.prevent
+                     @dragover.prevent="onDragOver(bIdx)"
+                     @dragleave="onDragLeave(bIdx)"
                      @drop="onDrop(bIdx)"
-                     :class="isCurrentBlock(block) ? 'border-sky-500 bg-sky-500/10' : 'border-white/5 hover:border-white/20 glass-card'">
+                     :class="{
+                       'border-sky-500 bg-sky-500/10': isCurrentBlock(block),
+                       'drag-over-highlight': dropTargetIdx === bIdx,
+                       'border-white/5 hover:border-white/20 glass-card': !isCurrentBlock(block) && dropTargetIdx !== bIdx
+                     }">
                   
                   <div class="flex items-center justify-between flex-wrap gap-2">
-                    <div class="flex items-center space-x-2">
-                      <div class="flex flex-col space-y-0.5">
-                        <button @click="moveBlock(bIdx, -1)" :disabled="bIdx === 0" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Up">
-                          <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
-                        </button>
-                        <button @click="moveBlock(bIdx, 1)" :disabled="bIdx === activeScheduleSet[selectedDayIdx].length - 1" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Down">
-                          <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
-                        </button>
+                    <div class="flex items-center space-x-2 flex-1 min-w-[280px]">
+                      
+                      <!-- Drag Handle & Reorder Controls -->
+                      <div class="flex items-center space-x-1 text-slate-500">
+                        <i data-lucide="grip-vertical" class="w-4 h-4 cursor-grab"></i>
+                        <div class="flex flex-col">
+                          <button @click="moveBlock(bIdx, -1)" :disabled="bIdx === 0" class="p-0.5 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition">
+                            <i data-lucide="chevron-up" class="w-3 h-3"></i>
+                          </button>
+                          <button @click="moveBlock(bIdx, 1)" :disabled="bIdx === activeScheduleSet[selectedDayIdx].length - 1" class="p-0.5 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition">
+                            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                          </button>
+                        </div>
                       </div>
 
-                      <input type="time" x-model="block.startTime" @change="saveSchedules()" class="bg-transparent border-b border-slate-600 text-xs text-slate-300 font-mono outline-none">
-                      <span class="text-xs text-slate-500">-</span>
-                      <input type="time" x-model="block.endTime" @change="saveSchedules()" class="bg-transparent border-b border-slate-600 text-xs text-slate-300 font-mono outline-none">
-                      
-                      <input type="text" x-model="block.title" @change="saveSchedules()" class="font-medium text-sm bg-transparent border-b border-transparent hover:border-slate-600 focus:border-sky-400 outline-none px-1">
+                      <!-- Time Inputs -->
+                      <div class="flex items-center space-x-1 font-mono text-xs text-slate-300 bg-slate-900/40 px-2 py-1 rounded-lg border border-white/5">
+                        <input type="time" x-model="block.startTime" @change="onBlockTimeChange()" class="bg-transparent outline-none cursor-pointer">
+                        <span class="text-slate-500">-</span>
+                        <input type="time" x-model="block.endTime" @change="onBlockTimeChange()" class="bg-transparent outline-none cursor-pointer">
+                      </div>
+
+                      <!-- Block Title Input -->
+                      <input type="text" x-model="block.title" @change="saveSchedules()" 
+                             class="font-medium text-sm bg-transparent border-b border-transparent hover:border-slate-600 focus:border-sky-400 outline-none px-1 flex-1 min-w-[120px]">
+
                     </div>
 
+                    <!-- Right Block Controls -->
                     <div class="flex items-center space-x-2">
-                      <button @click="addTaskToBlock(block)" class="p-1.5 text-slate-400 hover:text-sky-400 transition" title="Add Sub-task">
+                      <button @click="addTaskToBlock(block)" class="p-1.5 text-slate-400 hover:text-sky-400 transition rounded-lg hover:bg-white/5" title="Add Checklist Task">
                         <i data-lucide="check-square" class="w-4 h-4"></i>
                       </button>
                       <button @click="deleteBlock(selectedDayIdx, block.id)" class="p-1.5 text-red-400 hover:bg-red-500/20 transition bg-red-500/10 rounded-lg border border-red-500/20" title="Delete Block">
@@ -356,15 +398,16 @@
                     </div>
                   </div>
 
+                  <!-- Sub-tasks Checklist -->
                   <template x-if="block.tasks && block.tasks.length > 0">
-                    <div class="mt-3 pl-4 space-y-1.5 border-l-2 border-slate-700">
+                    <div class="mt-3 pl-6 space-y-1.5 border-l-2 border-slate-700/60">
                       <template x-for="(task, tIdx) in block.tasks" :key="tIdx">
                         <div class="flex items-center justify-between group">
                           <label class="flex items-center space-x-2 cursor-pointer text-xs flex-1">
                             <input type="checkbox" :checked="task.completed" @change="toggleTask(block.id, tIdx)" class="rounded border-slate-700 bg-slate-800 text-sky-500">
                             <input type="text" x-model="task.text" @change="saveSchedules()" class="bg-transparent outline-none flex-1" :class="task.completed ? 'line-through text-slate-500' : 'text-slate-300'">
                           </label>
-                          <button @click="deleteTask(block, tIdx)" class="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-1" title="Remove Task">
+                          <button @click="deleteTask(block, tIdx)" class="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-1">
                             <i data-lucide="x" class="w-3.5 h-3.5"></i>
                           </button>
                         </div>
@@ -377,9 +420,29 @@
             </div>
           </div>
 
+          <!-- Unscheduled Time Gaps Finder -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <h4 class="text-xs font-semibold text-sky-400 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="clock-4" class="w-4 h-4"></i>
+              <span>Available Free Gaps Today</span>
+            </h4>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="gap in detectFreeGaps()" :key="gap.start">
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900/60 border border-white/10 text-xs font-mono text-slate-300 flex items-center space-x-2">
+                  <span class="text-emerald-400" x-text="gap.start + ' - ' + gap.end"></span>
+                  <span class="text-slate-500 text-[10px]" x-text="'(' + gap.duration + 'm free)'"></span>
+                  <button @click="fillGap(gap)" class="text-sky-400 hover:text-sky-300 font-sans text-[10px] underline ml-1">+ Fill</button>
+                </div>
+              </template>
+              <template x-if="detectFreeGaps().length === 0">
+                <span class="text-xs text-slate-400">No major empty gaps detected for this day!</span>
+              </template>
+            </div>
+          </div>
+
         </div>
 
-        <!-- TAB 2: SEPARATE POMODORO FOCUS TIMER TAB -->
+        <!-- TAB 2: POMODORO FOCUS TIMER -->
         <div x-show="activeMainTab === 'pomodoro'" x-cloak class="glass-card rounded-2xl p-8 space-y-8 text-center">
           <div class="flex items-center justify-between border-b border-white/10 pb-4">
             <div class="text-left">
@@ -387,7 +450,7 @@
                 <i data-lucide="timer" class="w-6 h-6 text-sky-400"></i>
                 <span>Pomodoro Focus Station</span>
               </h2>
-              <p class="text-xs text-slate-400 mt-0.5">Dedicated interval timer for high-focus work & breaks</p>
+              <p class="text-xs text-slate-400 mt-0.5">High-focus study intervals with automated streak tracking</p>
             </div>
             
             <span class="text-xs px-3 py-1 rounded-full font-mono font-medium" 
@@ -395,7 +458,7 @@
                   x-text="timerMode === 'work' ? 'FOCUS SESSION' : 'REST BREAK'"></span>
           </div>
 
-          <!-- Large Central Countdown Ring -->
+          <!-- Countdown Ring -->
           <div class="relative w-64 h-64 mx-auto flex items-center justify-center py-4">
             <svg class="w-full h-full transform -rotate-90">
               <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="10" class="text-slate-800" fill="transparent" />
@@ -422,22 +485,54 @@
           <div class="flex items-center justify-center space-x-4 max-w-sm mx-auto pt-2">
             <button @click="toggleTimer()" class="flex-1 py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center space-x-2 text-white shadow-xl transition" :class="timerIsRunning ? 'bg-amber-500 hover:bg-amber-600' : 'bg-sky-500 hover:bg-sky-600'">
               <i :data-lucide="timerIsRunning ? 'pause' : 'play'" class="w-5 h-5"></i>
-              <span x-text="timerIsRunning ? 'Pause Timer' : 'Start Focus Session'"></span>
+              <span x-text="timerIsRunning ? 'Pause Session' : 'Start Focus Session'"></span>
             </button>
             
             <button @click="resetTimer()" class="p-3.5 rounded-2xl glass-card hover:bg-white/10 text-slate-400 hover:text-white transition" title="Reset Timer">
               <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
             </button>
           </div>
+        </div>
 
+        <!-- TAB 3: STUDY ANALYTICS DASHBOARD -->
+        <div x-show="activeMainTab === 'analytics'" x-cloak class="glass-card rounded-2xl p-6 space-y-6">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <h2 class="text-xl font-bold flex items-center space-x-2">
+                <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-400"></i>
+                <span>Study Productivity Analytics</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Real-time statistics derived from your active schedule and checklists</p>
+            </div>
+            <div class="flex items-center space-x-2 bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 rounded-xl text-sky-400 text-xs font-bold">
+              <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+              <span x-text="studyStreakDays + ' Day Streak!'"></span>
+            </div>
+          </div>
+
+          <!-- Stat Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Scheduled Hours (Today)</span>
+              <div class="text-2xl font-bold text-sky-400" x-text="getScheduledHoursToday() + ' hrs'"></div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Total Completed Tasks</span>
+              <div class="text-2xl font-bold text-emerald-400" x-text="getCompletedTaskCount() + ' tasks'"></div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Task Completion Rate</span>
+              <div class="text-2xl font-bold text-indigo-400" x-text="getTaskCompletionPercentage() + '%'"></div>
+            </div>
+          </div>
         </div>
 
       </section>
 
-      <!-- Right Col: Procedural Audio & Settings -->
+      <!-- Right Column: Procedural Audio & Settings -->
       <section class="space-y-6">
 
-        <!-- Nature Sound Generator -->
+        <!-- Procedural Ambient Engine -->
         <div class="glass-card rounded-2xl p-6 space-y-5">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-bold flex items-center space-x-2">
@@ -447,65 +542,22 @@
             <span class="text-xs px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono">Web Audio</span>
           </div>
 
-          <!-- Audio Controls Grid -->
-          <div class="space-y-4">
-            
-            <!-- Rain & Thunder -->
-            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <i data-lucide="cloud-rain" class="w-5 h-5 text-sky-400"></i>
-                <div>
-                  <div class="text-sm font-medium">Rain & Thunder</div>
-                  <div class="text-[10px] text-slate-400">Filtered pink noise + rumble</div>
+          <!-- Ambient Controls -->
+          <div class="space-y-3">
+            <template x-for="(sound, key) in ambientSounds" :key="key">
+              <div class="p-3 rounded-xl bg-white/5 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <i :data-lucide="sound.icon" class="w-4 h-4 text-sky-400"></i>
+                  <div>
+                    <div class="text-xs font-medium" x-text="sound.label"></div>
+                    <div class="text-[10px] text-slate-400" x-text="sound.desc"></div>
+                  </div>
                 </div>
+                <button @click="toggleSound(key)" class="p-2 rounded-xl transition" :class="activeSounds[key] ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
+                  <i :data-lucide="activeSounds[key] ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
+                </button>
               </div>
-              <button @click="toggleSound('rain')" class="p-2 rounded-xl transition" :class="activeSounds.rain ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
-                <i :data-lucide="activeSounds.rain ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
-              </button>
-            </div>
-
-            <!-- Ocean Waves -->
-            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <i data-lucide="waves" class="w-5 h-5 text-teal-400"></i>
-                <div>
-                  <div class="text-sm font-medium">Ocean Surf</div>
-                  <div class="text-[10px] text-slate-400">LFO oscillating swell generator</div>
-                </div>
-              </div>
-              <button @click="toggleSound('ocean')" class="p-2 rounded-xl transition" :class="activeSounds.ocean ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
-                <i :data-lucide="activeSounds.ocean ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
-              </button>
-            </div>
-
-            <!-- Forest Wind -->
-            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <i data-lucide="wind" class="w-5 h-5 text-indigo-400"></i>
-                <div>
-                  <div class="text-sm font-medium">Forest Wind</div>
-                  <div class="text-[10px] text-slate-400">Resonant bandpass turbulence</div>
-                </div>
-              </div>
-              <button @click="toggleSound('wind')" class="p-2 rounded-xl transition" :class="activeSounds.wind ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
-                <i :data-lucide="activeSounds.wind ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
-              </button>
-            </div>
-
-            <!-- Stream & Birds -->
-            <div class="p-3.5 rounded-xl bg-white/5 flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <i data-lucide="trees" class="w-5 h-5 text-emerald-400"></i>
-                <div>
-                  <div class="text-sm font-medium">Stream & Birds</div>
-                  <div class="text-[10px] text-slate-400">Water turbulence + FM synth chirps</div>
-                </div>
-              </div>
-              <button @click="toggleSound('stream')" class="p-2 rounded-xl transition" :class="activeSounds.stream ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
-                <i :data-lucide="activeSounds.stream ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
-              </button>
-            </div>
-
+            </template>
           </div>
 
           <!-- Volume Slider -->
@@ -518,20 +570,28 @@
           </div>
         </div>
 
-        <!-- Transition Chime Alert Card -->
+        <!-- Desktop Notifications & Chimes Settings -->
         <div class="glass-card rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold flex items-center space-x-2">
+            <i data-lucide="bell" class="w-4 h-4 text-sky-400"></i>
+            <span>Alerts & Notifications</span>
+          </h3>
+
           <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold flex items-center space-x-2">
-              <i data-lucide="bell" class="w-4 h-4 text-sky-400"></i>
-              <span>Transition Audio Chimes</span>
-            </h3>
+            <span class="text-xs text-slate-300">Browser Pre-Block Alerts</span>
+            <button @click="requestNotificationPermission()" class="px-2.5 py-1 rounded-lg text-xs font-semibold"
+                    :class="notificationsEnabled ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'">
+              <span x-text="notificationsEnabled ? 'Enabled ✓' : 'Enable'"></span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-300">Transition Chimes</span>
             <input type="checkbox" x-model="chimesEnabled" @change="saveSettings()" class="rounded border-slate-700 bg-slate-800 text-sky-500 w-4 h-4">
           </div>
-          <p class="text-xs text-slate-400">
-            Plays a synthesized chime at block completion and timer events.
-          </p>
+
           <button @click="playChime(523.25, 'sine')" class="w-full py-2 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition">
-            Test Transition Chime
+            Test Chime Audio
           </button>
         </div>
 
@@ -539,7 +599,7 @@
 
     </main>
 
-    <!-- Fullscreen Focus HUD Overlay -->
+    <!-- FULLSCREEN FOCUS HUD -->
     <div x-show="focusMode" x-cloak class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between p-12 transition-all duration-300">
       
       <!-- Top HUD Bar -->
@@ -555,15 +615,13 @@
         </button>
       </div>
 
-      <!-- Main Central HUD Block -->
+      <!-- Center Countdown -->
       <div class="max-w-2xl mx-auto w-full text-center space-y-8 my-auto">
-        
         <div class="space-y-2">
           <span class="text-xs font-semibold text-sky-400 tracking-widest uppercase" x-text="activeBlock ? (activeBlock.startTime + ' - ' + activeBlock.endTime) : 'NO ACTIVE BLOCK'"></span>
           <h1 class="text-5xl font-black tracking-tight" x-text="activeBlock ? activeBlock.title : 'Free Time'"></h1>
         </div>
 
-        <!-- Big Countdown Ring -->
         <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
           <svg class="w-full h-full transform -rotate-90">
             <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent" />
@@ -579,7 +637,6 @@
           </div>
         </div>
 
-        <!-- HUD Tasks -->
         <template x-if="activeBlock && activeBlock.tasks && activeBlock.tasks.length > 0">
           <div class="max-w-md mx-auto space-y-2 text-left bg-slate-900/60 p-6 rounded-2xl border border-white/5 backdrop-blur">
             <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Tasks to Complete</h4>
@@ -591,23 +648,53 @@
             </template>
           </div>
         </template>
-
       </div>
 
-      <!-- Bottom Audio Controls in Focus Mode -->
+      <!-- Bottom Sound Quick Controls -->
       <div class="flex items-center justify-between max-w-xl mx-auto w-full glass-card p-4 rounded-2xl">
         <div class="flex items-center space-x-2">
           <i data-lucide="waves" class="w-5 h-5 text-sky-400"></i>
-          <span class="text-xs font-medium">Ambient Focus Sound</span>
+          <span class="text-xs font-medium">Ambient Focus Engine</span>
         </div>
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2">
           <button @click="toggleSound('rain')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.rain ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Rain</button>
           <button @click="toggleSound('ocean')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.ocean ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Ocean</button>
           <button @click="toggleSound('wind')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.wind ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Wind</button>
           <button @click="toggleSound('stream')" class="p-2 rounded-lg text-xs font-medium transition" :class="activeSounds.stream ? 'bg-sky-500 text-white' : 'bg-white/5 text-slate-400'">Stream</button>
         </div>
       </div>
+    </div>
 
+    <!-- DATA BACKUP & RESTORE MODAL -->
+    <div x-show="showDataModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="glass-card rounded-2xl max-w-lg w-full p-6 space-y-4 border border-white/10 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h3 class="text-lg font-bold flex items-center space-x-2">
+            <i data-lucide="database" class="w-5 h-5 text-sky-400"></i>
+            <span>JSON Backup & Sync</span>
+          </h3>
+          <button @click="showDataModal = false" class="text-slate-400 hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-400">
+          Export your complete schedule, profiles, and settings to a file, or paste existing JSON data to restore across browsers.
+        </p>
+
+        <textarea x-model="jsonDataArea" placeholder="Paste JSON backup data here..." class="w-full h-32 bg-slate-900/80 border border-white/10 rounded-xl p-3 text-xs font-mono text-slate-200 outline-none focus:border-sky-400"></textarea>
+
+        <div class="flex items-center justify-between gap-2">
+          <button @click="copyBackupJson()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium transition flex items-center space-x-1.5">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+            <span>Copy JSON</span>
+          </button>
+          <button @click="restoreFromJson()" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium transition flex items-center space-x-1.5">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            <span>Restore Data</span>
+          </button>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -615,92 +702,125 @@
   <script>
     function routineApp() {
       return {
-        // Main Navigation State
+        // Navigation & Profile State
         activeMainTab: 'schedule',
-        isVacationMode: false,
+        activeProfile: 'normal',
         aiPromptInput: '',
-        
-        // App State
         currentTheme: 'dark-glass',
         focusMode: false,
+        showDataModal: false,
+        jsonDataArea: '',
+        
+        // Time & Date State
         currentTimeStr: '',
         currentDateStr: '',
         currentDayIdx: 0,
         selectedDayIdx: 0,
         daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        
-        // Active Block Calculations
+
+        // Active Block Tracking
         activeBlock: null,
         blockProgressPercent: 0,
         blockTimeRemainingStr: '00:00',
+        detectedConflicts: [],
+        studyStreakDays: 3,
 
         // Drag and Drop
         draggedIdx: null,
+        dropTargetIdx: null,
 
-        // Timer State (Pomodoro)
+        // Pomodoro State
         timerDuration: 1500,
         timerRemaining: 1500,
         timerMode: 'work',
         timerIsRunning: false,
         timerInterval: null,
 
-        // Settings
+        // Settings & Audio
+        notificationsEnabled: false,
         chimesEnabled: true,
         masterVolume: 0.6,
-        activeSounds: { rain: false, ocean: false, wind: false, stream: false },
-        soundNodes: {},
         audioCtx: null,
+        masterGain: null,
+        soundNodes: {},
+        activeSounds: { rain: false, ocean: false, wind: false, stream: false },
 
-        // Standard School Schedule Storage
-        schedules: [
-          [
-            { id: 1, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [{ text: 'Attend classes', completed: false }] },
-            { id: 2, startTime: '15:30', endTime: '17:00', title: 'Study & Homework Block', tasks: [{ text: 'Review coursework', completed: false }] },
-            { id: 3, startTime: '17:00', endTime: '18:00', title: 'Exercise / Walk', tasks: [] },
-            { id: 4, startTime: '19:00', endTime: '21:00', title: 'Personal Coding / Projects', tasks: [] }
-          ],
-          [
-            { id: 5, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] },
-            { id: 6, startTime: '15:30', endTime: '17:00', title: 'Assignments & Practice', tasks: [] }
-          ],
-          [{ id: 7, startTime: '08:00', endTime: '14:00', title: 'School Routine', tasks: [] }],
-          [{ id: 8, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
-          [{ id: 9, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
-          [{ id: 10, startTime: '10:00', endTime: '12:00', title: 'Weekly Review & Planning', tasks: [] }],
-          [{ id: 11, startTime: '11:00', endTime: '13:00', title: 'Relaxation & Reading', tasks: [] }]
-        ],
+        ambientSounds: {
+          rain: { label: 'Rain & Thunder', desc: 'Pink noise rumble', icon: 'cloud-rain' },
+          ocean: { label: 'Ocean Surf', desc: 'LFO swell wave synth', icon: 'waves' },
+          wind: { label: 'Forest Wind', desc: 'Resonant turbulence', icon: 'wind' },
+          stream: { label: 'Stream & Birds', desc: 'Water flow + chirps', icon: 'trees' }
+        },
 
-        // Vacation Schedule Storage
-        vacationSchedules: [
-          [
-            { id: 101, startTime: '09:30', endTime: '11:00', title: 'Late Sleep In & Breakfast', tasks: [] },
-            { id: 102, startTime: '11:00', endTime: '13:30', title: 'Personal Coding & Projects', tasks: [{ text: 'Work on portal ideas', completed: false }] },
-            { id: 103, startTime: '14:00', endTime: '17:00', title: 'Gaming / Hobbies / Outdoors', tasks: [] },
-            { id: 104, startTime: '19:30', endTime: '22:00', title: 'Movie / Chill Block', tasks: [] }
+        // 3 Routine Profiles Storage
+        profilesData: {
+          normal: [
+            [{ id: 1, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [{ text: 'Attend classes', completed: false }] },
+             { id: 2, startTime: '15:30', endTime: '17:00', title: 'Study Block', tasks: [] }],
+            [{ id: 3, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
+            [{ id: 4, startTime: '08:00', endTime: '14:00', title: 'School Routine', tasks: [] }],
+            [{ id: 5, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
+            [{ id: 6, startTime: '08:00', endTime: '15:00', title: 'School Routine', tasks: [] }],
+            [{ id: 7, startTime: '10:00', endTime: '12:00', title: 'Weekly Review', tasks: [] }],
+            [{ id: 8, startTime: '11:00', endTime: '13:00', title: 'Relaxation & Reading', tasks: [] }]
           ],
-          [
-            { id: 105, startTime: '10:00', endTime: '12:00', title: 'Morning Walk / Exercise', tasks: [] },
-            { id: 106, startTime: '13:00', endTime: '16:00', title: 'Creative Time / Coding', tasks: [] }
+          exam: [
+            [{ id: 201, startTime: '08:30', endTime: '11:30', title: 'Grammar Drill', tasks: [] },
+             { id: 202, startTime: '13:00', endTime: '16:00', title: 'Vocab Review', tasks: [] }],
+            [{ id: 203, startTime: '08:30', endTime: '11:30', title: 'Science Review', tasks: [] }],
+            [{ id: 204, startTime: '09:00', endTime: '12:00', title: 'Mechanics Practice', tasks: [] }],
+            [{ id: 205, startTime: '09:00', endTime: '12:00', title: 'Exam Prep', tasks: [] }],
+            [{ id: 206, startTime: '09:00', endTime: '12:00', title: 'Model Words Review', tasks: [] }],
+            [{ id: 207, startTime: '10:00', endTime: '13:00', title: 'Mock Test Session', tasks: [] }],
+            [{ id: 208, startTime: '11:00', endTime: '13:00', title: 'Final Review & Rest', tasks: [] }]
           ],
-          [{ id: 107, startTime: '10:00', endTime: '14:00', title: 'Free Time & Exploration', tasks: [] }],
-          [{ id: 108, startTime: '10:00', endTime: '15:00', title: 'Day Out / Hobbies', tasks: [] }],
-          [{ id: 109, startTime: '10:00', endTime: '15:00', title: 'Project Time', tasks: [] }],
-          [{ id: 110, startTime: '11:00', endTime: '14:00', title: 'Weekend Relax', tasks: [] }],
-          [{ id: 111, startTime: '11:00', endTime: '14:00', title: 'Downtime & Reading', tasks: [] }]
-        ],
+          holiday: [
+            [{ id: 301, startTime: '10:00', endTime: '12:00', title: 'Sleep In & Morning Walk', tasks: [] },
+             { id: 302, startTime: '13:00', endTime: '16:00', title: 'Personal Coding & Projects', tasks: [{ text: 'Develop web apps', completed: false }] }],
+            [{ id: 303, startTime: '10:30', endTime: '13:30', title: 'Creative Time & Hobbies', tasks: [] }],
+            [{ id: 304, startTime: '10:00', endTime: '14:00', title: 'Free Exploration', tasks: [] }],
+            [{ id: 305, startTime: '10:00', endTime: '15:00', title: 'Day Trip / Outdoors', tasks: [] }],
+            [{ id: 306, startTime: '11:00', endTime: '15:00', title: 'Gaming / Coding', tasks: [] }],
+            [{ id: 307, startTime: '11:00', endTime: '14:00', title: 'Weekend Relaxation', tasks: [] }],
+            [{ id: 308, startTime: '11:00', endTime: '14:00', title: 'Downtime', tasks: [] }]
+          ]
+        },
 
         get activeScheduleSet() {
-          return this.isVacationMode ? this.vacationSchedules : this.schedules;
+          return this.profilesData[this.activeProfile];
         },
 
         initApp() {
           this.loadSavedData();
           this.updateTime();
           setInterval(() => this.updateTime(), 1000);
-          this.$nextTick(() => lucide.createIcons());
+          this.refreshIcons();
         },
 
-        // --- SMART AI PARSER ---
+        refreshIcons() {
+          this.$nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        },
+
+        switchTab(tab) {
+          this.activeMainTab = tab;
+          this.refreshIcons();
+        },
+
+        switchProfile() {
+          this.saveSchedules();
+          this.updateTime();
+          this.refreshIcons();
+        },
+
+        getProfileName() {
+          if (this.activeProfile === 'normal') return 'Normal Week';
+          if (this.activeProfile === 'exam') return 'Exam Week';
+          return 'Holiday Mode';
+        },
+
+        // --- ENHANCED AI PARSER ---
         processAiPrompt() {
           const rawText = this.aiPromptInput.trim();
           const lower = rawText.toLowerCase();
@@ -719,49 +839,104 @@
           // 2. Extract Times precisely
           const timeRegex = /\b([0-9]{1,2}:[0-9]{2})\b/g;
           const foundTimes = rawText.match(timeRegex);
-          let startTime = '08:00';
-          let endTime = '09:00';
+          let startTime = '08:30';
+          let endTime = '15:20';
           if (foundTimes && foundTimes.length >= 2) {
             startTime = foundTimes[0].padStart(5, '0');
             endTime = foundTimes[1].padStart(5, '0');
           }
 
-          // 3. Smart Clean Title Extraction
+          // 3. Clean Title
+          let cleaned = rawText;
+          dayNames.forEach(d => cleaned = cleaned.replace(new RegExp(d, 'gi'), ''));
+          if (foundTimes) foundTimes.forEach(t => cleaned = cleaned.replace(t, ''));
+          cleaned = cleaned.replace(/\b(hey|so|i|have|can|you|add|that|please|the|a|an|at|from|to|is|starts|and|ends|with|task)\b/gi, '').replace(/\s+/g, ' ').trim();
           let title = 'Study Block';
-          if (lower.includes('school')) {
-            title = 'School';
-          } else {
-            let cleaned = rawText;
-            dayNames.forEach(d => {
-              cleaned = cleaned.replace(new RegExp(d, 'gi'), '');
-            });
-            if (foundTimes) {
-              foundTimes.forEach(t => {
-                cleaned = cleaned.replace(t, '');
-              });
-            }
-            const fillers = /\b(hey|so|i|have|can|you|add|that|please|the|a|an|at|from|to|is|starts|and|ends)\b/gi;
-            cleaned = cleaned.replace(fillers, '').replace(/\s+/g, ' ').trim();
-            if (cleaned.length > 1) {
-              title = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+          if (cleaned.length > 1) {
+            title = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+          }
+
+          // 4. Tasks
+          let tasks = [];
+          if (lower.includes('task')) {
+            const parts = rawText.split(/task/i);
+            if (parts.length > 1) {
+              tasks.push({ text: parts[1].trim(), completed: false });
             }
           }
 
-          // Push into active schedule set & sort chronologically
           this.activeScheduleSet[targetDayIdx].push({
             id: Date.now(),
-            startTime: startTime,
-            endTime: endTime,
-            title: title,
-            tasks: []
+            startTime,
+            endTime,
+            title,
+            tasks
           });
 
           this.sortCurrentDay();
-          this.saveSchedules();
           this.aiPromptInput = '';
           this.selectedDayIdx = targetDayIdx;
-          alert(`Successfully added & sorted "${title}" (${startTime} - ${endTime}) on ${this.daysOfWeek[targetDayIdx]}!`);
-          this.$nextTick(() => lucide.createIcons());
+          this.checkConflicts();
+          this.refreshIcons();
+        },
+
+        onBlockTimeChange() {
+          this.saveSchedules();
+          this.checkConflicts();
+        },
+
+        checkConflicts() {
+          const currentDaySchedules = this.activeScheduleSet[this.selectedDayIdx] || [];
+          let conflicts = [];
+
+          for (let i = 0; i < currentDaySchedules.length; i++) {
+            for (let j = i + 1; j < currentDaySchedules.length; j++) {
+              const b1 = currentDaySchedules[i];
+              const b2 = currentDaySchedules[j];
+
+              if (b1.startTime < b2.endTime && b1.endTime > b2.startTime) {
+                conflicts.push(`"${b1.title}" (${b1.startTime}-${b1.endTime}) overlaps with "${b2.title}" (${b2.startTime}-${b2.endTime})`);
+              }
+            }
+          }
+
+          this.detectedConflicts = conflicts;
+        },
+
+        detectFreeGaps() {
+          const currentDaySchedules = [...(this.activeScheduleSet[this.selectedDayIdx] || [])];
+          currentDaySchedules.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+          let gaps = [];
+          let lastEndMins = 8 * 60; // 08:00 AM start
+
+          currentDaySchedules.forEach(block => {
+            const [sH, sM] = block.startTime.split(':').map(Number);
+            const [eH, eM] = block.endTime.split(':').map(Number);
+            const startMins = sH * 60 + sM;
+            const endMins = eH * 60 + eM;
+
+            if (startMins - lastEndMins >= 30) {
+              const startStr = `${String(Math.floor(lastEndMins / 60)).padStart(2, '0')}:${String(lastEndMins % 60).padStart(2, '0')}`;
+              const endStr = `${String(Math.floor(startMins / 60)).padStart(2, '0')}:${String(startMins % 60).padStart(2, '0')}`;
+              gaps.push({ start: startStr, end: endStr, duration: startMins - lastEndMins });
+            }
+            if (endMins > lastEndMins) lastEndMins = endMins;
+          });
+
+          return gaps;
+        },
+
+        fillGap(gap) {
+          this.activeScheduleSet[this.selectedDayIdx].push({
+            id: Date.now(),
+            startTime: gap.start,
+            endTime: gap.end,
+            title: 'Study / Rest Block',
+            tasks: []
+          });
+          this.sortCurrentDay();
+          this.refreshIcons();
         },
 
         sortCurrentDay() {
@@ -770,12 +945,6 @@
             list.sort((a, b) => a.startTime.localeCompare(b.startTime));
             this.saveSchedules();
           }
-        },
-
-        toggleVacationMode() {
-          this.isVacationMode = !this.isVacationMode;
-          this.saveSettings();
-          this.updateTime();
         },
 
         updateTime() {
@@ -787,6 +956,7 @@
           this.currentDayIdx = jsDay === 0 ? 6 : jsDay - 1;
 
           this.calculateActiveBlock(now);
+          this.checkConflicts();
         },
 
         calculateActiveBlock(now) {
@@ -804,7 +974,6 @@
 
             if (nowMins >= startMins && nowMins < endMins) {
               found = block;
-              
               const totalSecs = (endMins - startMins) * 60;
               const elapsedSecs = nowSecs - (startMins * 60);
               this.blockProgressPercent = Math.min(100, Math.max(0, Math.round((elapsedSecs / totalSecs) * 100)));
@@ -813,6 +982,13 @@
               const remM = Math.floor(remSecs / 60);
               const remS = remSecs % 60;
               this.blockTimeRemainingStr = `${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`;
+
+              if (remM === 5 && remS === 0 && this.notificationsEnabled) {
+                new Notification("Routine Portal Alert", {
+                  body: `Block "${block.title}" ends in 5 minutes!`,
+                  icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                });
+              }
 
               break;
             }
@@ -827,12 +1003,10 @@
 
         shiftSchedule(mins) {
           if (!this.activeScheduleSet[this.selectedDayIdx]) return;
-          
           this.activeScheduleSet[this.selectedDayIdx].forEach(b => {
             b.startTime = this.addMinutesToTimeStr(b.startTime, mins);
             b.endTime = this.addMinutesToTimeStr(b.endTime, mins);
           });
-
           this.saveSchedules();
         },
 
@@ -847,48 +1021,36 @@
           const list = this.activeScheduleSet[this.selectedDayIdx];
           const targetIdx = bIdx + direction;
           if (targetIdx < 0 || targetIdx >= list.length) return;
-          
           const temp = list[bIdx];
           list[bIdx] = list[targetIdx];
           list[targetIdx] = temp;
-          
           this.saveSchedules();
         },
 
-        onDragStart(bIdx) {
-          this.draggedIdx = bIdx;
-        },
-
+        onDragStart(bIdx) { this.draggedIdx = bIdx; },
+        onDragOver(bIdx) { this.dropTargetIdx = bIdx; },
+        onDragLeave(bIdx) { if (this.dropTargetIdx === bIdx) this.dropTargetIdx = null; },
         onDrop(targetIdx) {
-          if (this.draggedIdx === null || this.draggedIdx === targetIdx) return;
-          const list = this.activeScheduleSet[this.selectedDayIdx];
-          const draggedItem = list.splice(this.draggedIdx, 1)[0];
-          list.splice(targetIdx, 0, draggedItem);
-          this.draggedIdx = null;
-          this.saveSchedules();
-        },
-
-        toggleTask(blockId, taskIdx) {
-          for (let day of this.activeScheduleSet) {
-            let block = day.find(b => b.id === blockId);
-            if (block && block.tasks[taskIdx]) {
-              block.tasks[taskIdx].completed = !block.tasks[taskIdx].completed;
-              break;
-            }
+          if (this.draggedIdx !== null && this.draggedIdx !== targetIdx) {
+            const list = this.activeScheduleSet[this.selectedDayIdx];
+            const item = list.splice(this.draggedIdx, 1)[0];
+            list.splice(targetIdx, 0, item);
+            this.saveSchedules();
           }
-          this.saveSchedules();
+          this.draggedIdx = null;
+          this.dropTargetIdx = null;
         },
 
         addNewBlock() {
-          const newId = Date.now();
           this.activeScheduleSet[this.selectedDayIdx].push({
-            id: newId,
+            id: Date.now(),
             startTime: '12:00',
             endTime: '13:00',
             title: 'New Time Block',
             tasks: []
           });
-          this.sortCurrentDay();
+          this.saveSchedules();
+          this.refreshIcons();
         },
 
         deleteBlock(dayIdx, blockId) {
@@ -904,6 +1066,7 @@
           if (!block.tasks) block.tasks = [];
           block.tasks.push({ text: 'New task', completed: false });
           this.saveSchedules();
+          this.refreshIcons();
         },
 
         deleteTask(block, tIdx) {
@@ -913,7 +1076,18 @@
           }
         },
 
-        // --- STUDY TIMER SUITE ---
+        toggleTask(blockId, taskIdx) {
+          for (let day of this.activeScheduleSet) {
+            let block = day.find(b => b.id === blockId);
+            if (block && block.tasks[taskIdx]) {
+              block.tasks[taskIdx].completed = !block.tasks[taskIdx].completed;
+              break;
+            }
+          }
+          this.saveSchedules();
+        },
+
+        // --- TIMER ---
         setTimerPreset(mins, mode) {
           this.timerMode = mode;
           this.timerDuration = mins * 60;
@@ -943,10 +1117,7 @@
           this.timerRemaining = this.timerDuration;
         },
 
-        get timerPercent() {
-          return Math.round(((this.timerDuration - this.timerRemaining) / this.timerDuration) * 100);
-        },
-
+        get timerPercent() { return Math.round(((this.timerDuration - this.timerRemaining) / this.timerDuration) * 100); },
         get timerDisplayStr() {
           const m = Math.floor(this.timerRemaining / 60);
           const s = this.timerRemaining % 60;
@@ -955,10 +1126,57 @@
 
         toggleFocusMode() {
           this.focusMode = !this.focusMode;
-          this.$nextTick(() => lucide.createIcons());
+          this.refreshIcons();
         },
 
-        // --- WEB AUDIO SYNTHESIS ENGINE ---
+        requestNotificationPermission() {
+          if ("Notification" in window) {
+            Notification.requestPermission().then(perm => {
+              if (perm === "granted") {
+                this.notificationsEnabled = true;
+                this.saveSettings();
+              }
+            });
+          }
+        },
+
+        // --- STATS ANALYTICS ---
+        getScheduledHoursToday() {
+          const todayBlocks = this.activeScheduleSet[this.currentDayIdx] || [];
+          let mins = 0;
+          todayBlocks.forEach(b => {
+            const [sH, sM] = b.startTime.split(':').map(Number);
+            const [eH, eM] = b.endTime.split(':').map(Number);
+            mins += (eH * 60 + eM) - (sH * 60 + sM);
+          });
+          return (mins / 60).toFixed(1);
+        },
+
+        getCompletedTaskCount() {
+          let count = 0;
+          this.activeScheduleSet.forEach(day => {
+            day.forEach(b => {
+              if (b.tasks) count += b.tasks.filter(t => t.completed).length;
+            });
+          });
+          return count;
+        },
+
+        getTaskCompletionPercentage() {
+          let total = 0;
+          let completed = 0;
+          this.activeScheduleSet.forEach(day => {
+            day.forEach(b => {
+              if (b.tasks) {
+                total += b.tasks.length;
+                completed += b.tasks.filter(t => t.completed).length;
+              }
+            });
+          });
+          return total === 0 ? 0 : Math.round((completed / total) * 100);
+        },
+
+        // --- WEB AUDIO ---
         initAudio() {
           if (!this.audioCtx) {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -982,158 +1200,39 @@
         toggleSound(type) {
           this.initAudio();
           this.activeSounds[type] = !this.activeSounds[type];
-
-          if (this.activeSounds[type]) {
-            this.startProceduralSound(type);
-          } else {
-            this.stopProceduralSound(type);
-          }
+          if (this.activeSounds[type]) this.startProceduralSound(type);
+          else this.stopProceduralSound(type);
         },
 
         startProceduralSound(type) {
           const ctx = this.audioCtx;
-          
-          if (type === 'rain') {
-            const bufferSize = ctx.sampleRate * 2;
-            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-              output[i] = Math.random() * 2 - 1;
-            }
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
 
-            const whiteNoise = ctx.createBufferSource();
-            whiteNoise.buffer = noiseBuffer;
-            whiteNoise.loop = true;
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+          noise.loop = true;
 
-            const filter = ctx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1000, ctx.currentTime);
+          const filter = ctx.createBiquadFilter();
+          filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
+          filter.frequency.setValueAtTime(type === 'rain' ? 800 : 400, ctx.currentTime);
 
-            const highpass = ctx.createBiquadFilter();
-            highpass.type = 'highpass';
-            highpass.frequency.setValueAtTime(400, ctx.currentTime);
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
 
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.masterGain);
 
-            whiteNoise.connect(filter);
-            filter.connect(highpass);
-            highpass.connect(gain);
-            gain.connect(this.masterGain);
-
-            whiteNoise.start();
-            this.soundNodes.rain = { source: whiteNoise, gain: gain };
-          }
-
-          else if (type === 'ocean') {
-            const bufferSize = ctx.sampleRate * 3;
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            let lastOut = 0.0;
-            for (let i = 0; i < bufferSize; i++) {
-              let white = Math.random() * 2 - 1;
-              data[i] = (lastOut + (0.02 * white)) / 1.02;
-              lastOut = data[i];
-            }
-
-            const noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-            noise.loop = true;
-
-            const filter = ctx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(400, ctx.currentTime);
-
-            const lfo = ctx.createOscillator();
-            lfo.frequency.setValueAtTime(0.12, ctx.currentTime);
-
-            const lfoGain = ctx.createGain();
-            lfoGain.gain.setValueAtTime(300, ctx.currentTime);
-
-            lfo.connect(filter.frequency);
-
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.3, ctx.currentTime);
-
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(this.masterGain);
-
-            noise.start();
-            lfo.start();
-            this.soundNodes.ocean = { source: noise, lfo: lfo, gain: gain };
-          }
-
-          else if (type === 'wind') {
-            const bufferSize = ctx.sampleRate * 2;
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-              data[i] = Math.random() * 2 - 1;
-            }
-
-            const noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-            noise.loop = true;
-
-            const filter = ctx.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(350, ctx.currentTime);
-            filter.Q.setValueAtTime(3.0, ctx.currentTime);
-
-            const lfo = ctx.createOscillator();
-            lfo.frequency.setValueAtTime(0.2, ctx.currentTime);
-
-            const lfoGain = ctx.createGain();
-            lfoGain.gain.setValueAtTime(200, ctx.currentTime);
-
-            lfo.connect(filter.frequency);
-
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.2, ctx.currentTime);
-
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(this.masterGain);
-
-            noise.start();
-            lfo.start();
-            this.soundNodes.wind = { source: noise, lfo: lfo, gain: gain };
-          }
-
-          else if (type === 'stream') {
-            const bufferSize = ctx.sampleRate * 2;
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-              data[i] = Math.random() * 2 - 1;
-            }
-
-            const noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-            noise.loop = true;
-
-            const filter = ctx.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(800, ctx.currentTime);
-            filter.Q.setValueAtTime(1.0, ctx.currentTime);
-
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.18, ctx.currentTime);
-
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(this.masterGain);
-
-            noise.start();
-            this.soundNodes.stream = { source: noise, gain: gain };
-          }
+          noise.start();
+          this.soundNodes[type] = { source: noise, gain: gain };
         },
 
         stopProceduralSound(type) {
           if (this.soundNodes[type]) {
             if (this.soundNodes[type].source) this.soundNodes[type].source.stop();
-            if (this.soundNodes[type].lfo) this.soundNodes[type].lfo.stop();
             delete this.soundNodes[type];
           }
         },
@@ -1142,23 +1241,48 @@
           this.initAudio();
           const osc = this.audioCtx.createOscillator();
           const gain = this.audioCtx.createGain();
-
           osc.type = type;
           osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
-
           gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 1.5);
-
           osc.connect(gain);
           gain.connect(this.masterGain);
-
           osc.start();
           osc.stop(this.audioCtx.currentTime + 1.5);
         },
 
+        // --- BACKUP / RESTORE ---
+        copyBackupJson() {
+          const fullData = {
+            profilesData: this.profilesData,
+            activeProfile: this.activeProfile,
+            currentTheme: this.currentTheme,
+            chimesEnabled: this.chimesEnabled
+          };
+          this.jsonDataArea = JSON.stringify(fullData, null, 2);
+          navigator.clipboard.writeText(this.jsonDataArea);
+          alert("Backup JSON copied to clipboard!");
+        },
+
+        restoreFromJson() {
+          try {
+            const parsed = JSON.parse(this.jsonDataArea);
+            if (parsed.profilesData) {
+              this.profilesData = parsed.parsedProfilesData || parsed.profilesData;
+              if (parsed.activeProfile) this.activeProfile = parsed.activeProfile;
+              if (parsed.currentTheme) this.currentTheme = parsed.currentTheme;
+              this.saveSchedules();
+              this.saveSettings();
+              this.showDataModal = false;
+              alert("Data successfully restored!");
+            }
+          } catch (e) {
+            alert("Invalid JSON data format.");
+          }
+        },
+
         exportCalendar() {
           let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Routine Schedule Portal//EN\n";
-          
           this.activeScheduleSet.forEach((daySchedule) => {
             daySchedule.forEach(block => {
               icsContent += "BEGIN:VEVENT\n";
@@ -1167,7 +1291,6 @@
               icsContent += "END:VEVENT\n";
             });
           });
-
           icsContent += "END:VCALENDAR";
 
           const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
@@ -1180,32 +1303,32 @@
         },
 
         saveSchedules() {
-          localStorage.setItem('routine_portal_schedules', JSON.stringify(this.schedules));
-          localStorage.setItem('routine_portal_vacation_schedules', JSON.stringify(this.vacationSchedules));
+          localStorage.setItem('routine_portal_profiles', JSON.stringify(this.profilesData));
+          localStorage.setItem('routine_portal_active_profile', this.activeProfile);
         },
 
         saveSettings() {
           localStorage.setItem('routine_portal_theme', this.currentTheme);
           localStorage.setItem('routine_portal_chimes', JSON.stringify(this.chimesEnabled));
+          localStorage.setItem('routine_portal_notifs', JSON.stringify(this.notificationsEnabled));
           localStorage.setItem('routine_portal_volume', this.masterVolume);
-          localStorage.setItem('routine_portal_vacation_mode', JSON.stringify(this.isVacationMode));
         },
 
         loadSavedData() {
-          const savedSchedules = localStorage.getItem('routine_portal_schedules');
-          if (savedSchedules) this.schedules = JSON.parse(savedSchedules);
+          const savedProfiles = localStorage.getItem('routine_portal_profiles');
+          if (savedProfiles) this.profilesData = JSON.parse(savedProfiles);
 
-          const savedVacationSchedules = localStorage.getItem('routine_portal_vacation_schedules');
-          if (savedVacationSchedules) this.vacationSchedules = JSON.parse(savedVacationSchedules);
-
-          const savedVacationMode = localStorage.getItem('routine_portal_vacation_mode');
-          if (savedVacationMode !== null) this.isVacationMode = JSON.parse(savedVacationMode);
+          const savedProfile = localStorage.getItem('routine_portal_active_profile');
+          if (savedProfile) this.activeProfile = savedProfile;
 
           const savedTheme = localStorage.getItem('routine_portal_theme');
           if (savedTheme) this.currentTheme = savedTheme;
 
           const savedChimes = localStorage.getItem('routine_portal_chimes');
           if (savedChimes !== null) this.chimesEnabled = JSON.parse(savedChimes);
+
+          const savedNotifs = localStorage.getItem('routine_portal_notifs');
+          if (savedNotifs !== null) this.notificationsEnabled = JSON.parse(savedNotifs);
 
           const savedVol = localStorage.getItem('routine_portal_volume');
           if (savedVol !== null) this.masterVolume = parseFloat(savedVol);
