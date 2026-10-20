@@ -153,6 +153,14 @@
       <!-- External Links & Header Actions -->
       <div class="flex items-center space-x-3 flex-wrap gap-2">
         
+        <!-- Vacation Mode Toggle Button -->
+        <button @click="toggleVacationMode()" 
+                :class="isVacationMode ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' : 'glass-card text-slate-400 hover:text-white'"
+                class="px-3.5 py-2 rounded-xl border font-medium text-xs flex items-center space-x-2 transition shadow-sm">
+          <i data-lucide="palmtree" class="w-4 h-4 text-amber-400"></i>
+          <span x-text="isVacationMode ? 'Vacation Mode ON 🏝️' : 'Vacation Mode'"></span>
+        </button>
+
         <!-- Link to 10krijgen Portal -->
         <a href="https://154143-stack.github.io/10krijgen-/" target="_blank" rel="noopener noreferrer" 
            class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 font-medium text-xs flex items-center space-x-2 transition shadow-sm">
@@ -188,13 +196,22 @@
       </div>
     </header>
 
+    <!-- Vacation Mode Banner Notice -->
+    <div x-show="isVacationMode" x-cloak class="bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border-b border-amber-500/30 px-6 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2 text-xs text-amber-300 font-medium">
+        <i data-lucide="sun" class="w-4 h-4 text-amber-400 animate-spin-slow"></i>
+        <span>Vacation Mode Active: Relaxed holiday routine loaded. Enjoy your break!</span>
+      </div>
+      <button @click="toggleVacationMode()" class="text-xs text-amber-400 hover:underline">Switch to Normal Routine</button>
+    </div>
+
     <!-- Main Content Area -->
     <main class="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <!-- Left 2 Cols: Dynamic Main View (Schedule OR Pomodoro) -->
       <section class="lg:col-span-2 space-y-6">
 
-        <!-- TAB 1: SCHEDULE VIEW (Hides Focus Timer completely) -->
+        <!-- TAB 1: SCHEDULE VIEW -->
         <div x-show="activeMainTab === 'schedule'" class="space-y-6">
           
           <!-- Active Block Banner -->
@@ -269,7 +286,7 @@
             <div class="flex items-center justify-between mb-2">
               <h3 class="text-lg font-bold flex items-center space-x-2">
                 <i data-lucide="list-todo" class="w-5 h-5 text-sky-400"></i>
-                <span x-text="daysOfWeek[selectedDayIdx] + ' Schedule'"></span>
+                <span x-text="daysOfWeek[selectedDayIdx] + (isVacationMode ? ' (Vacation Routine)' : ' Schedule')"></span>
               </h3>
               <button @click="addNewBlock()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium transition flex items-center space-x-1">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -278,7 +295,7 @@
             </div>
 
             <div class="space-y-3">
-              <template x-for="(block, bIdx) in schedules[selectedDayIdx]" :key="block.id">
+              <template x-for="(block, bIdx) in activeScheduleSet[selectedDayIdx]" :key="block.id">
                 <div class="p-4 rounded-xl border transition-all duration-200 cursor-grab active:cursor-grabbing" 
                      draggable="true"
                      @dragstart="onDragStart(bIdx)"
@@ -292,7 +309,7 @@
                         <button @click="moveBlock(bIdx, -1)" :disabled="bIdx === 0" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Up">
                           <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
                         </button>
-                        <button @click="moveBlock(bIdx, 1)" :disabled="bIdx === schedules[selectedDayIdx].length - 1" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Down">
+                        <button @click="moveBlock(bIdx, 1)" :disabled="bIdx === activeScheduleSet[selectedDayIdx].length - 1" class="p-1 rounded hover:bg-white/10 disabled:opacity-20 text-slate-400 transition" title="Move Down">
                           <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
                         </button>
                       </div>
@@ -575,6 +592,7 @@
       return {
         // Main Navigation State
         activeMainTab: 'schedule', // 'schedule' or 'pomodoro'
+        isVacationMode: false,
         
         // App State
         currentTheme: 'dark-glass',
@@ -604,7 +622,7 @@
         chimesEnabled: true,
         masterVolume: 0.6,
 
-        // Schedules Storage
+        // Standard School Schedule Storage
         schedules: [
           // Mon
           [
@@ -630,22 +648,47 @@
           [{ id: 11, startTime: '11:00', endTime: '13:00', title: 'Relaxation & Reading', tasks: [] }]
         ],
 
-        // Web Audio Procedural Sound Engine
-        audioCtx: null,
-        masterGain: null,
-        activeSounds: {
-          rain: false,
-          ocean: false,
-          wind: false,
-          stream: false
+        // Vacation Schedule Storage
+        vacationSchedules: [
+          // Mon
+          [
+            { id: 101, startTime: '09:30', endTime: '11:00', title: 'Late Sleep In & Breakfast', tasks: [] },
+            { id: 102, startTime: '11:00', endTime: '13:30', title: 'Personal Coding & Projects', tasks: [{ text: 'Work on portal ideas', completed: false }] },
+            { id: 103, startTime: '14:00', endTime: '17:00', title: 'Gaming / Hobbies / Outdoors', tasks: [] },
+            { id: 104, startTime: '19:30', endTime: '22:00', title: 'Movie / Chill Block', tasks: [] }
+          ],
+          // Tue
+          [
+            { id: 105, startTime: '10:00', endTime: '12:00', title: 'Morning Walk / Exercise', tasks: [] },
+            { id: 106, startTime: '13:00', endTime: '16:00', title: 'Creative Time / Coding', tasks: [] }
+          ],
+          // Wed
+          [{ id: 107, startTime: '10:00', endTime: '14:00', title: 'Free Time & Exploration', tasks: [] }],
+          // Thu
+          [{ id: 108, startTime: '10:00', endTime: '15:00', title: 'Day Out / Hobbies', tasks: [] }],
+          // Fri
+          [{ id: 109, startTime: '10:00', endTime: '15:00', title: 'Project Time', tasks: [] }],
+          // Sat
+          [{ id: 110, startTime: '11:00', endTime: '14:00', title: 'Weekend Relax', tasks: [] }],
+          // Sun
+          [{ id: 111, startTime: '11:00', endTime: '14:00', title: 'Downtime & Reading', tasks: [] }]
+        ],
+
+        get activeScheduleSet() {
+          return this.isVacationMode ? this.vacationSchedules : this.schedules;
         },
-        soundNodes: {},
 
         initApp() {
           this.loadSavedData();
           this.updateTime();
           setInterval(() => this.updateTime(), 1000);
           this.$nextTick(() => lucide.createIcons());
+        },
+
+        toggleVacationMode() {
+          this.isVacationMode = !this.isVacationMode;
+          this.saveSettings();
+          this.updateTime();
         },
 
         updateTime() {
@@ -660,7 +703,7 @@
         },
 
         calculateActiveBlock(now) {
-          const currentDaySchedules = this.schedules[this.currentDayIdx] || [];
+          const currentDaySchedules = this.activeScheduleSet[this.currentDayIdx] || [];
           const nowMins = now.getHours() * 60 + now.getMinutes();
           const nowSecs = nowMins * 60 + now.getSeconds();
 
@@ -696,9 +739,9 @@
         },
 
         shiftSchedule(mins) {
-          if (!this.schedules[this.selectedDayIdx]) return;
+          if (!this.activeScheduleSet[this.selectedDayIdx]) return;
           
-          this.schedules[this.selectedDayIdx].forEach(b => {
+          this.activeScheduleSet[this.selectedDayIdx].forEach(b => {
             b.startTime = this.addMinutesToTimeStr(b.startTime, mins);
             b.endTime = this.addMinutesToTimeStr(b.endTime, mins);
           });
@@ -715,9 +758,9 @@
 
         moveBlock(bIdx, direction) {
           const targetIdx = bIdx + direction;
-          if (targetIdx < 0 || targetIdx >= this.schedules[this.selectedDayIdx].length) return;
+          if (targetIdx < 0 || targetIdx >= this.activeScheduleSet[this.selectedDayIdx].length) return;
           
-          const list = this.schedules[this.selectedDayIdx];
+          const list = this.activeScheduleSet[this.selectedDayIdx];
           const temp = list[bIdx];
           list[bIdx] = list[targetIdx];
           list[targetIdx] = temp;
@@ -732,7 +775,7 @@
         onDrop(targetIdx) {
           if (this.draggedIdx === null || this.draggedIdx === targetIdx) return;
           
-          const list = this.schedules[this.selectedDayIdx];
+          const list = this.activeScheduleSet[this.selectedDayIdx];
           const draggedItem = list.splice(this.draggedIdx, 1)[0];
           list.splice(targetIdx, 0, draggedItem);
           
@@ -741,7 +784,7 @@
         },
 
         toggleTask(blockId, taskIdx) {
-          for (let day of this.schedules) {
+          for (let day of this.activeScheduleSet) {
             let block = day.find(b => b.id === blockId);
             if (block && block.tasks[taskIdx]) {
               block.tasks[taskIdx].completed = !block.tasks[taskIdx].completed;
@@ -753,7 +796,7 @@
 
         addNewBlock() {
           const newId = Date.now();
-          this.schedules[this.selectedDayIdx].push({
+          this.activeScheduleSet[this.selectedDayIdx].push({
             id: newId,
             startTime: '12:00',
             endTime: '13:00',
@@ -764,7 +807,7 @@
         },
 
         deleteBlock(dayIdx, blockIdx) {
-          this.schedules[dayIdx].splice(blockIdx, 1);
+          this.activeScheduleSet[dayIdx].splice(blockIdx, 1);
           this.saveSchedules();
         },
 
@@ -1027,7 +1070,7 @@
         exportCalendar() {
           let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Routine Schedule Portal//EN\n";
           
-          this.schedules.forEach((daySchedule) => {
+          this.activeScheduleSet.forEach((daySchedule) => {
             daySchedule.forEach(block => {
               icsContent += "BEGIN:VEVENT\n";
               icsContent += `SUMMARY:${block.title}\n`;
@@ -1049,17 +1092,25 @@
 
         saveSchedules() {
           localStorage.setItem('routine_portal_schedules', JSON.stringify(this.schedules));
+          localStorage.setItem('routine_portal_vacation_schedules', JSON.stringify(this.vacationSchedules));
         },
 
         saveSettings() {
           localStorage.setItem('routine_portal_theme', this.currentTheme);
           localStorage.setItem('routine_portal_chimes', JSON.stringify(this.chimesEnabled));
           localStorage.setItem('routine_portal_volume', this.masterVolume);
+          localStorage.setItem('routine_portal_vacation_mode', JSON.stringify(this.isVacationMode));
         },
 
         loadSavedData() {
           const savedSchedules = localStorage.getItem('routine_portal_schedules');
           if (savedSchedules) this.schedules = JSON.parse(savedSchedules);
+
+          const savedVacationSchedules = localStorage.getItem('routine_portal_vacation_schedules');
+          if (savedVacationSchedules) this.vacationSchedules = JSON.parse(savedVacationSchedules);
+
+          const savedVacationMode = localStorage.getItem('routine_portal_vacation_mode');
+          if (savedVacationMode !== null) this.isVacationMode = JSON.parse(savedVacationMode);
 
           const savedTheme = localStorage.getItem('routine_portal_theme');
           if (savedTheme) this.currentTheme = savedTheme;
