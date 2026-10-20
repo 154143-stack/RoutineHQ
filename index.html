@@ -443,7 +443,7 @@
         </div>
 
         <!-- TAB 2: POMODORO FOCUS TIMER -->
-        <div x-show="activeMainTab === 'pomodoro'" x-cloak class="glass-card rounded-2xl p-8 space-y-8 text-center">
+        <div x-show="activeMainTab === 'pomodoro'" x-cloak class="glass-card rounded-2xl p-8 space-y-6 text-center">
           <div class="flex items-center justify-between border-b border-white/10 pb-4">
             <div class="text-left">
               <h2 class="text-2xl font-bold flex items-center space-x-2">
@@ -458,27 +458,39 @@
                   x-text="timerMode === 'work' ? 'FOCUS SESSION' : 'REST BREAK'"></span>
           </div>
 
-          <!-- Countdown Ring -->
-          <div class="relative w-64 h-64 mx-auto flex items-center justify-center py-4">
-            <svg class="w-full h-full transform -rotate-90">
-              <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="10" class="text-slate-800" fill="transparent" />
-              <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="10" class="text-sky-400 transition-all duration-1000" 
+          <!-- Countdown Ring (Fixed SVG Clipping with viewBox and centered styling) -->
+          <div class="relative w-64 h-64 mx-auto flex items-center justify-center my-2">
+            <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 256 256">
+              <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="12" class="text-slate-800" fill="transparent" />
+              <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="12" class="text-sky-400 transition-all duration-1000" 
                       fill="transparent" 
                       :stroke-dasharray="2 * Math.PI * 110" 
                       :stroke-dashoffset="(2 * Math.PI * 110) * (1 - (timerPercent / 100))" 
                       stroke-linecap="round" />
             </svg>
-            <div class="absolute flex flex-col items-center">
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
               <span class="text-5xl font-mono font-black tracking-tight" x-text="timerDisplayStr"></span>
               <span class="text-xs text-slate-400 uppercase tracking-widest mt-2" x-text="timerIsRunning ? 'Session Running' : 'Paused'"></span>
             </div>
           </div>
 
-          <!-- Presets -->
-          <div class="flex items-center justify-center space-x-3 max-w-md mx-auto">
-            <button @click="setTimerPreset(25, 'work')" class="flex-1 py-2 rounded-xl text-xs font-semibold transition glass-card hover:bg-white/10" :class="timerDuration === 1500 && timerMode === 'work' ? 'border-sky-400 text-sky-400 bg-sky-500/10' : ''">25m Focus</button>
-            <button @click="setTimerPreset(5, 'break')" class="flex-1 py-2 rounded-xl text-xs font-semibold transition glass-card hover:bg-white/10" :class="timerDuration === 300 && timerMode === 'break' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/10' : ''">5m Short Break</button>
-            <button @click="setTimerPreset(15, 'break')" class="flex-1 py-2 rounded-xl text-xs font-semibold transition glass-card hover:bg-white/10" :class="timerDuration === 900 && timerMode === 'break' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/10' : ''">15m Long Break</button>
+          <!-- Presets & Custom Duration Controls -->
+          <div class="space-y-3 max-w-md mx-auto">
+            <div class="flex items-center justify-center space-x-3">
+              <button @click="setTimerPreset(25, 'work')" class="flex-1 py-2 rounded-xl text-xs font-semibold transition glass-card hover:bg-white/10" :class="timerDuration === 1500 && timerMode === 'work' ? 'border-sky-400 text-sky-400 bg-sky-500/10' : ''">25m Focus</button>
+              <button @click="setTimerPreset(5, 'break')" class="flex-1 py-2 rounded-xl text-xs font-semibold transition glass-card hover:bg-white/10" :class="timerDuration === 300 && timerMode === 'break' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/10' : ''">5m Short Break</button>
+              <button @click="setTimerPreset(15, 'break')" class="flex-1 py-2 rounded-xl text-xs font-semibold transition glass-card hover:bg-white/10" :class="timerDuration === 900 && timerMode === 'break' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/10' : ''">15m Long Break</button>
+            </div>
+
+            <!-- Custom Duration Adjuster -->
+            <div class="flex items-center justify-center space-x-3 glass-card px-4 py-2.5 rounded-xl">
+              <span class="text-xs text-slate-400">Custom Duration:</span>
+              <button @click="adjustCustomDuration(-5)" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono">-5m</button>
+              <button @click="adjustCustomDuration(-1)" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono">-1m</button>
+              <span class="text-xs font-mono font-bold text-sky-400" x-text="Math.round(timerDuration / 60) + ' min'"></span>
+              <button @click="adjustCustomDuration(1)" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono">+1m</button>
+              <button @click="adjustCustomDuration(5)" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono">+5m</button>
+            </div>
           </div>
 
           <!-- Controls -->
@@ -623,7 +635,7 @@
         </div>
 
         <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
-          <svg class="w-full h-full transform -rotate-90">
+          <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 256 256">
             <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent" />
             <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-sky-400 transition-all duration-1000" 
                     fill="transparent" 
@@ -631,7 +643,7 @@
                     :stroke-dashoffset="(2 * Math.PI * 110) * (1 - (blockProgressPercent / 100))" 
                     stroke-linecap="round" />
           </svg>
-          <div class="absolute flex flex-col items-center">
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
             <span class="text-4xl font-mono font-bold" x-text="blockTimeRemainingStr"></span>
             <span class="text-xs text-slate-400 mt-1">Remaining</span>
           </div>
@@ -1094,6 +1106,14 @@
           this.resetTimer();
         },
 
+        adjustCustomDuration(mins) {
+          let currentMins = Math.round(this.timerDuration / 60) + mins;
+          if (currentMins < 1) currentMins = 1;
+          if (currentMins > 120) currentMins = 120;
+          this.timerDuration = currentMins * 60;
+          this.resetTimer();
+        },
+
         toggleTimer() {
           this.timerIsRunning = !this.timerIsRunning;
           if (this.timerIsRunning) {
@@ -1268,7 +1288,7 @@
           try {
             const parsed = JSON.parse(this.jsonDataArea);
             if (parsed.profilesData) {
-              this.profilesData = parsed.parsedProfilesData || parsed.profilesData;
+              this.profilesData = parsed.profilesData;
               if (parsed.activeProfile) this.activeProfile = parsed.activeProfile;
               if (parsed.currentTheme) this.currentTheme = parsed.currentTheme;
               this.saveSchedules();
