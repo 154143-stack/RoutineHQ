@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annual Routine & Schedule Portal PRO MAX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+
+    /* 10 Custom Aesthetic Themes */
+    .theme-dark-glass {
+      --bg-base: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+    }
+    .theme-amoled {
+      --bg-base: #000000;
+      --bg-card: #121212;
+      --bg-card-border: #282828;
+      --text-main: #ffffff;
+      --text-muted: #888888;
+      --accent: #10b981;
+      --accent-hover: #059669;
+    }
+    .theme-nord {
+      --bg-base: #2e3440;
+      --bg-card: #3b4252;
+      --bg-card-border: #434c5e;
+      --text-main: #eceff4;
+      --text-muted: #d8dee9;
+      --accent: #88c0d0;
+      --accent-hover: #81a1c1;
+    }
+    .theme-autumn {
+      --bg-base: #1c1917;
+      --bg-card: #292524;
+      --bg-card-border: #44403c;
+      --text-main: #f5f5f4;
+      --text-muted: #a8a29e;
+      --accent: #f97316;
+      --accent-hover: #ea580c;
+    }
+    .theme-cyberpunk {
+      --bg-base: #090014;
+      --bg-card: rgba(26, 10, 46, 0.8);
+      --bg-card-border: #ff007f;
+      --text-main: #00f0ff;
+      --text-muted: #b967ff;
+      --accent: #ff007f;
+      --accent-hover: #d10068;
+    }
+    .theme-emerald {
+      --bg-base: #022c22;
+      --bg-card: rgba(6, 78, 59, 0.7);
+      --bg-card-border: rgba(52, 211, 153, 0.2);
+      --text-main: #ecfdf5;
+      --text-muted: #6ee7b7;
+      --accent: #10b981;
+      --accent-hover: #059669;
+    }
+    .theme-purple {
+      --bg-base: #1e1b4b;
+      --bg-card: rgba(49, 46, 129, 0.7);
+      --bg-card-border: rgba(165, 180, 252, 0.2);
+      --text-main: #eef2ff;
+      --text-muted: #a5b4fc;
+      --accent: #818cf8;
+      --accent-hover: #6366f1;
+    }
+    .theme-sunset {
+      --bg-base: #2d1215;
+      --bg-card: rgba(67, 20, 28, 0.75);
+      --bg-card-border: rgba(251, 113, 133, 0.2);
+      --text-main: #fff1f2;
+      --text-muted: #fda4af;
+      --accent: #f43f5e;
+      --accent-hover: #e11d48;
+    }
+    .theme-ocean {
+      --bg-base: #031b33;
+      --bg-card: rgba(10, 46, 80, 0.75);
+      --bg-card-border: rgba(56, 189, 248, 0.25);
+      --text-main: #f0f9ff;
+      --text-muted: #7dd3fc;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+    }
+    .theme-light {
+      --bg-base: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      backdrop-filter: blur(12px);
+    }
+
+    .drag-over-highlight {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
+  </style>
+</head>
+<body class="h-full theme-dark-glass" x-data="annualRoutineApp()" x-init="initApp()" :class="'theme-' + currentTheme">
+
+  <div class="min-h-full flex flex-col">
+    
+    <!-- Top Header Navigation Bar -->
+    <header class="glass-card sticky top-0 z-40 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-md">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 rounded-xl bg-sky-500/20 text-sky-400 shadow-inner">
+          <i data-lucide="calendar-days" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+            <span>Annual Routine & Schedule Portal</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 font-mono">PRO MAX 365</span>
+          </h1>
+          <p class="text-xs text-slate-400" x-text="currentTimeStr + ' • ' + currentDateStr"></p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center space-x-1 p-1 rounded-xl glass-card">
+        <button @click="switchTab('daily')" 
+                :class="activeMainTab === 'daily' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>Daily Planner</span>
+        </button>
+        <button @click="switchTab('year')" 
+                :class="activeMainTab === 'year' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span>Yearly Calendar</span>
+        </button>
+        <button @click="switchTab('recurring')" 
+                :class="activeMainTab === 'recurring' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
+          <i data-lucide="repeat" class="w-4 h-4"></i>
+          <span>Recurring Rules</span>
+        </button>
+        <button @click="switchTab('pomodoro')" 
+                :class="activeMainTab === 'pomodoro' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 relative">
+          <i data-lucide="timer" class="w-4 h-4"></i>
+          <span>Timer</span>
+          <span x-show="timerIsRunning" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse absolute top-1 right-1"></span>
+        </button>
+        <button @click="switchTab('analytics')" 
+                :class="activeMainTab === 'analytics' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'"
+                class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span>Analytics</span>
+        </button>
+      </div>
+
+      <!-- Right Action Controls -->
+      <div class="flex items-center space-x-2 flex-wrap gap-2">
+        <a href="https://154143-stack.github.io/10krijgen-/" target="_blank" rel="noopener noreferrer" 
+           class="px-3 py-2 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 font-medium text-xs flex items-center space-x-1.5 transition shadow-sm">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span>10krijgen</span>
+        </a>
+
+        <button @click="toggleFocusMode()" class="px-3 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs flex items-center space-x-1.5 transition shadow-lg shadow-sky-500/20">
+          <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+          <span>Focus HUD</span>
+        </button>
+
+        <button @click="showDataModal = true" class="p-2 rounded-xl glass-card hover:bg-white/10 text-slate-300 transition" title="Backup & Restore Data">
+          <i data-lucide="database" class="w-4 h-4 text-sky-400"></i>
+        </button>
+
+        <button @click="exportCalendar()" class="p-2 rounded-xl glass-card hover:bg-white/10 text-slate-300 transition" title="Export .ics Calendar">
+          <i data-lucide="calendar-plus" class="w-4 h-4 text-emerald-400"></i>
+        </button>
+
+        <select x-model="currentTheme" @change="saveSettings()" class="glass-card px-3 py-2 rounded-xl text-xs font-medium bg-transparent cursor-pointer outline-none">
+          <option value="dark-glass" class="bg-slate-900 text-white">Dark Glass</option>
+          <option value="amoled" class="bg-black text-white">AMOLED Pitch Black</option>
+          <option value="nord" class="bg-slate-800 text-white">Nord Slate</option>
+          <option value="autumn" class="bg-stone-900 text-white">Warm Autumn</option>
+          <option value="cyberpunk" class="bg-purple-950 text-cyan-400">Cyberpunk Neon</option>
+          <option value="emerald" class="bg-emerald-950 text-emerald-200">Emerald Forest</option>
+          <option value="purple" class="bg-indigo-950 text-indigo-200">Midnight Purple</option>
+          <option value="sunset" class="bg-rose-950 text-rose-200">Sunset Orange</option>
+          <option value="ocean" class="bg-sky-950 text-sky-200">Deep Ocean</option>
+          <option value="light" class="bg-slate-100 text-slate-900">Clean Light Mode</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left Main Column (2 Span) -->
+      <section class="lg:col-span-2 space-y-6">
+
+        <!-- TAB 1: DAILY PLANNER -->
+        <div x-show="activeMainTab === 'daily'" class="space-y-6">
+          
+          <!-- AI Natural Language Command Bar -->
+          <div class="glass-card rounded-2xl p-4 border border-sky-500/30 shadow-lg space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-sky-400 flex items-center space-x-1.5 uppercase tracking-wider">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>AI Natural Language Command Bar</span>
+              </span>
+              <span class="text-[10px] text-slate-400">e.g. "14:00 - 15:30 Math Test with task solve equations"</span>
+            </div>
+            <form @submit.prevent="processAiPrompt()" class="flex items-center space-x-2">
+              <input type="text" x-model="aiPromptInput" placeholder="Type event details to parse onto selected date..." 
+                     class="flex-1 bg-slate-900/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-400">
+              <button type="submit" class="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs transition shadow-md flex items-center space-x-1.5">
+                <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+                <span>Parse Event</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Date Navigation Header -->
+          <div class="glass-card rounded-2xl p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <button @click="changeDate(-1)" class="p-2 rounded-xl hover:bg-white/10 text-slate-300 transition">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+              </button>
+              <div>
+                <span class="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Active Schedule Date</span>
+                <input type="date" x-model="selectedIsoDate" class="block bg-transparent text-base font-bold outline-none cursor-pointer text-slate-100">
+              </div>
+              <button @click="changeDate(1)" class="p-2 rounded-xl hover:bg-white/10 text-slate-300 transition">
+                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <button @click="resetToToday()" class="px-3.5 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 text-xs font-semibold transition">
+              Jump to Today
+            </button>
+          </div>
+
+          <!-- Special Event Alert Banner -->
+          <template x-if="getSpecialEventsForSelectedDate().length > 0">
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 space-y-2">
+              <div class="flex items-center space-x-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                <span>Special Test / Exam Event Scheduled Today!</span>
+              </div>
+              <template x-for="event in getSpecialEventsForSelectedDate()" :key="event.id">
+                <div class="flex items-center justify-between bg-slate-900/60 p-2.5 rounded-xl border border-white/5">
+                  <div>
+                    <span class="text-xs font-bold text-white" x-text="event.title"></span>
+                    <span class="text-[10px] text-amber-300 ml-2" x-text="'(' + event.category + ')'"></span>
+                  </div>
+                  <span class="text-xs font-mono text-slate-300" x-text="event.startTime + ' - ' + event.endTime"></span>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Live Active Block Banner -->
+          <template x-if="selectedIsoDate === todayIsoString">
+            <div x-show="activeBlock" class="glass-card rounded-2xl p-6 border-l-4 border-l-sky-500 shadow-xl relative overflow-hidden">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="flex items-center space-x-2 mb-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-400">
+                      <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse mr-1.5"></span>
+                      LIVE ACTIVE BLOCK
+                    </span>
+                  </div>
+                  <h2 class="text-2xl font-bold" x-text="activeBlock ? activeBlock.title : ''"></h2>
+                  <p class="text-sm text-slate-400 mt-1" x-text="activeBlock ? (activeBlock.startTime + ' - ' + activeBlock.endTime) : ''"></p>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <div class="flex justify-between text-xs text-slate-400 mb-1">
+                  <span x-text="blockProgressPercent + '% completed'"></span>
+                  <span x-text="blockTimeRemainingStr + ' remaining'"></span>
+                </div>
+                <div class="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+                  <div class="bg-sky-400 h-2 rounded-full transition-all duration-1000" :style="'width: ' + blockProgressPercent + '%'"></div>
+                </div>
+              </div>
+
+              <template x-if="activeBlock && activeBlock.tasks && activeBlock.tasks.length > 0">
+                <div class="mt-5 pt-4 border-t border-white/10">
+                  <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Block Tasks</h4>
+                  <div class="space-y-2">
+                    <template x-for="(task, index) in activeBlock.tasks" :key="index">
+                      <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" :checked="task.completed" @change="toggleTask(activeBlock.id, index)" class="w-4 h-4 rounded text-sky-500 bg-slate-800 border-slate-600">
+                        <span :class="task.completed ? 'line-through text-slate-500' : 'text-sm text-slate-200'" x-text="task.text"></span>
+                      </label>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Timeline Blocks List -->
+          <div class="glass-card rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-lg font-bold flex items-center space-x-2">
+                <i data-lucide="list-todo" class="w-5 h-5 text-sky-400"></i>
+                <span x-text="'Schedule for ' + selectedIsoDate"></span>
+              </h3>
+              <button @click="openAddEventModal()" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition flex items-center space-x-1 border border-amber-500/30">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                <span>Add Test / Event</span>
+              </button>
+            </div>
+
+            <div class="space-y-3">
+              <template x-for="(block, bIdx) in getMergedDayBlocks()" :key="block.id">
+                <div class="p-4 rounded-xl border transition-all duration-200" 
+                     :class="block.isSpecific ? 'border-amber-500 bg-amber-500/10' : 'border-white/5 glass-card'">
+                  
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex items-center space-x-2 flex-1 min-w-[280px]">
+                      <span class="text-[10px] px-2 py-0.5 rounded font-mono font-semibold"
+                            :class="block.isSpecific ? 'bg-amber-500/20 text-amber-400' : 'bg-sky-500/20 text-sky-400'"
+                            x-text="block.isSpecific ? 'TEST / EVENT' : 'RECURRING WEEKLY'"></span>
+
+                      <div class="flex items-center space-x-1 font-mono text-xs text-slate-300 bg-slate-900/40 px-2 py-1 rounded-lg border border-white/5">
+                        <input type="time" x-model="block.startTime" @change="saveSchedules()" class="bg-transparent outline-none cursor-pointer">
+                        <span class="text-slate-500">-</span>
+                        <input type="time" x-model="block.endTime" @change="saveSchedules()" class="bg-transparent outline-none cursor-pointer">
+                      </div>
+
+                      <input type="text" x-model="block.title" @change="saveSchedules()" 
+                             class="font-medium text-sm bg-transparent border-b border-transparent hover:border-slate-600 focus:border-sky-400 outline-none px-1 flex-1 min-w-[120px]">
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                      <button @click="addTaskToBlock(block)" class="p-1.5 text-slate-400 hover:text-sky-400 transition rounded-lg hover:bg-white/5" title="Add Task">
+                        <i data-lucide="check-square" class="w-4 h-4"></i>
+                      </button>
+                      <button @click="deleteBlockItem(block)" class="p-1.5 text-red-400 hover:bg-red-500/20 transition bg-red-500/10 rounded-lg border border-red-500/20" title="Delete">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <template x-if="block.tasks && block.tasks.length > 0">
+                    <div class="mt-3 pl-6 space-y-1.5 border-l-2 border-slate-700/60">
+                      <template x-for="(task, tIdx) in block.tasks" :key="tIdx">
+                        <div class="flex items-center justify-between group">
+                          <label class="flex items-center space-x-2 cursor-pointer text-xs flex-1">
+                            <input type="checkbox" :checked="task.completed" @change="toggleTaskItem(block, tIdx)" class="rounded border-slate-700 bg-slate-800 text-sky-500">
+                            <input type="text" x-model="task.text" @change="saveSchedules()" class="bg-transparent outline-none flex-1" :class="task.completed ? 'line-through text-slate-500' : 'text-slate-300'">
+                          </label>
+                          <button @click="block.tasks.splice(tIdx, 1); saveSchedules()" class="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-1">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: YEARLY CALENDAR -->
+        <div x-show="activeMainTab === 'year'" x-cloak class="glass-card rounded-2xl p-6 space-y-6">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <h2 class="text-xl font-bold flex items-center space-x-2">
+                <i data-lucide="calendar" class="w-5 h-5 text-sky-400"></i>
+                <span>Annual Academic Calendar (Test Weeks & Special Events)</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Manage all scheduled tests, exam weeks, and holidays for the entire year</p>
+            </div>
+            
+            <button @click="openAddEventModal()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium text-xs flex items-center space-x-1.5 shadow-lg shadow-amber-500/20">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Add Test / Event</span>
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <template x-for="event in yearlyEvents" :key="event.id">
+              <div class="p-4 rounded-xl bg-slate-900/60 border border-white/10 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="p-3 rounded-xl bg-amber-500/20 text-amber-400 text-center font-mono min-w-[70px]">
+                    <div class="text-xs uppercase font-bold" x-text="formatEventMonth(event.date)"></div>
+                    <div class="text-lg font-black" x-text="formatEventDay(event.date)"></div>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-sm text-slate-100" x-text="event.title"></h4>
+                    <p class="text-xs text-slate-400" x-text="event.date + ' • ' + event.startTime + ' - ' + event.endTime + ' (' + event.category + ')'"></p>
+                  </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                  <button @click="jumpToDate(event.date)" class="px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-400 text-xs font-semibold hover:bg-sky-500/30">View Day</button>
+                  <button @click="deleteYearlyEvent(event.id)" class="p-2 text-red-400 hover:bg-red-500/20 rounded-lg">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+            </template>
+            <template x-if="yearlyEvents.length === 0">
+              <div class="text-center py-8 text-slate-400 text-xs">No special test weeks or yearly events scheduled yet.</div>
+            </template>
+          </div>
+        </div>
+
+        <!-- TAB 3: RECURRING RULES -->
+        <div x-show="activeMainTab === 'recurring'" x-cloak class="glass-card rounded-2xl p-6 space-y-6">
+          <div class="border-b border-white/10 pb-4">
+            <h2 class="text-xl font-bold flex items-center space-x-2">
+              <i data-lucide="repeat" class="w-5 h-5 text-sky-400"></i>
+              <span>Recurring Schedule Rules (Repeats Every Week)</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Set weekly repeating blocks like school hours that automatically appear every week.</p>
+          </div>
+
+          <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+            <template x-for="(day, idx) in daysOfWeek" :key="day">
+              <button 
+                @click="selectedRecurringDayIdx = idx" 
+                :class="selectedRecurringDayIdx === idx ? 'bg-sky-500 text-white' : 'glass-card text-slate-400 hover:text-white'"
+                class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">
+                <span x-text="day"></span>
+              </button>
+            </template>
+          </div>
+
+          <div class="space-y-3">
+            <template x-for="(block, bIdx) in recurringSchedules[selectedRecurringDayIdx]" :key="block.id">
+              <div class="p-4 rounded-xl border border-white/5 glass-card flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="flex items-center space-x-1 font-mono text-xs text-slate-300 bg-slate-900/40 px-2 py-1 rounded-lg border border-white/5">
+                    <input type="time" x-model="block.startTime" @change="saveSchedules()" class="bg-transparent outline-none">
+                    <span>-</span>
+                    <input type="time" x-model="block.endTime" @change="saveSchedules()" class="bg-transparent outline-none">
+                  </div>
+                  <input type="text" x-model="block.title" @change="saveSchedules()" class="font-medium text-sm bg-transparent border-b border-transparent hover:border-slate-600 focus:border-sky-400 outline-none px-1">
+                </div>
+
+                <button @click="deleteRecurringBlock(selectedRecurringDayIdx, block.id)" class="p-1.5 text-red-400 hover:bg-red-500/20 bg-red-500/10 rounded-lg">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </template>
+            <button @click="addRecurringBlock(selectedRecurringDayIdx)" class="w-full py-2.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 text-xs font-semibold border border-sky-500/30">
+              + Add Recurring Rule for <span x-text="daysOfWeek[selectedRecurringDayIdx]"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 4: POMODORO TIMER -->
+        <div x-show="activeMainTab === 'pomodoro'" x-cloak class="glass-card rounded-2xl p-8 space-y-6 text-center">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div class="text-left">
+              <h2 class="text-2xl font-bold flex items-center space-x-2">
+                <i data-lucide="timer" class="w-6 h-6 text-sky-400"></i>
+                <span>Pomodoro Focus Station</span>
+              </h2>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-full font-mono font-medium bg-sky-500/20 text-sky-400">FOCUS TIMER</span>
+          </div>
+
+          <div class="relative w-64 h-64 mx-auto flex items-center justify-center my-2">
+            <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 256 256">
+              <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="12" class="text-slate-800" fill="transparent" />
+              <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="12" class="text-sky-400 transition-all duration-1000" 
+                      fill="transparent" 
+                      :stroke-dasharray="2 * Math.PI * 110" 
+                      :stroke-dashoffset="(2 * Math.PI * 110) * (1 - (timerPercent / 100))" 
+                      stroke-linecap="round" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-5xl font-mono font-black tracking-tight" x-text="timerDisplayStr"></span>
+              <span class="text-xs text-slate-400 uppercase tracking-widest mt-2" x-text="timerIsRunning ? 'Session Running' : 'Paused'"></span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center space-x-3 glass-card px-4 py-2.5 rounded-xl max-w-md mx-auto">
+            <span class="text-xs text-slate-400">Duration:</span>
+            <button @click="adjustCustomDuration(-5)" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono">-5m</button>
+            <span class="text-xs font-mono font-bold text-sky-400" x-text="Math.round(timerDuration / 60) + ' min'"></span>
+            <button @click="adjustCustomDuration(5)" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono">+5m</button>
+          </div>
+
+          <div class="flex items-center justify-center space-x-4 max-w-sm mx-auto pt-2">
+            <button @click="toggleTimer()" class="flex-1 py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center space-x-2 text-white shadow-xl transition" :class="timerIsRunning ? 'bg-amber-500 hover:bg-amber-600' : 'bg-sky-500 hover:bg-sky-600'">
+              <i :data-lucide="timerIsRunning ? 'pause' : 'play'" class="w-5 h-5"></i>
+              <span x-text="timerIsRunning ? 'Pause Session' : 'Start Focus Session'"></span>
+            </button>
+            <button @click="resetTimer()" class="p-3.5 rounded-2xl glass-card hover:bg-white/10 text-slate-400 hover:text-white transition">
+              <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 5: ANALYTICS -->
+        <div x-show="activeMainTab === 'analytics'" x-cloak class="glass-card rounded-2xl p-6 space-y-6">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <h2 class="text-xl font-bold flex items-center space-x-2">
+                <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-400"></i>
+                <span>Study Productivity Analytics</span>
+              </h2>
+            </div>
+            <div class="flex items-center space-x-2 bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 rounded-xl text-sky-400 text-xs font-bold">
+              <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+              <span x-text="studyStreakDays + ' Day Streak!'"></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Scheduled Hours Today</span>
+              <div class="text-2xl font-bold text-sky-400" x-text="getScheduledHoursToday() + ' hrs'"></div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Completed Tasks</span>
+              <div class="text-2xl font-bold text-emerald-400" x-text="getCompletedTaskCount() + ' tasks'"></div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/50 border border-white/5 space-y-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Completion Rate</span>
+              <div class="text-2xl font-bold text-indigo-400" x-text="getTaskCompletionPercentage() + '%'"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Procedural Audio & Settings -->
+      <section class="space-y-6">
+        <div class="glass-card rounded-2xl p-6 space-y-5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center space-x-2">
+              <i data-lucide="waves" class="w-5 h-5 text-sky-400"></i>
+              <span>Ambient Focus Engine</span>
+            </h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono">Web Audio</span>
+          </div>
+
+          <div class="space-y-3">
+            <template x-for="(sound, key) in ambientSounds" :key="key">
+              <div class="p-3 rounded-xl bg-white/5 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <i :data-lucide="sound.icon" class="w-4 h-4 text-sky-400"></i>
+                  <div>
+                    <div class="text-xs font-medium" x-text="sound.label"></div>
+                    <div class="text-[10px] text-slate-400" x-text="sound.desc"></div>
+                  </div>
+                </div>
+                <button @click="toggleSound(key)" class="p-2 rounded-xl transition" :class="activeSounds[key] ? 'bg-sky-500 text-white' : 'glass-card text-slate-400'">
+                  <i :data-lucide="activeSounds[key] ? 'volume-2' : 'volume-x'" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </template>
+          </div>
+
+          <div class="pt-2">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+              <span>Master Volume</span>
+              <span x-text="Math.round(masterVolume * 100) + '%'"></span>
+            </div>
+            <input type="range" min="0" max="1" step="0.01" x-model="masterVolume" @input="updateMasterVolume()" class="w-full accent-sky-400 bg-slate-700 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold flex items-center space-x-2">
+            <i data-lucide="bell" class="w-4 h-4 text-sky-400"></i>
+            <span>Alerts & Chimes</span>
+          </h3>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-300">Transition Chimes</span>
+            <input type="checkbox" x-model="chimesEnabled" @change="saveSettings()" class="rounded border-slate-700 bg-slate-800 text-sky-500 w-4 h-4">
+          </div>
+          <button @click="playChime(523.25, 'sine')" class="w-full py-2 rounded-xl glass-card hover:bg-white/10 text-xs font-medium transition">
+            Test Chime Audio
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FULLSCREEN FOCUS HUD -->
+    <div x-show="focusMode" x-cloak class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between p-12 transition-all duration-300">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div class="w-3 h-3 rounded-full bg-sky-400 animate-ping"></div>
+          <span class="text-sm font-mono text-slate-400 uppercase tracking-widest" x-text="currentDateStr"></span>
+        </div>
+        <button @click="toggleFocusMode()" class="px-4 py-2 rounded-xl glass-card hover:bg-white/10 text-slate-300 text-xs font-medium">Exit HUD</button>
+      </div>
+
+      <div class="max-w-2xl mx-auto w-full text-center space-y-8 my-auto">
+        <div class="space-y-2">
+          <span class="text-xs font-semibold text-sky-400 tracking-widest uppercase" x-text="activeBlock ? (activeBlock.startTime + ' - ' + activeBlock.endTime) : 'NO ACTIVE BLOCK'"></span>
+          <h1 class="text-5xl font-black tracking-tight" x-text="activeBlock ? activeBlock.title : 'Free Time'"></h1>
+        </div>
+
+        <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
+          <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 256 256">
+            <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent" />
+            <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" class="text-sky-400 transition-all duration-1000" 
+                    fill="transparent" 
+                    :stroke-dasharray="2 * Math.PI * 110" 
+                    :stroke-dashoffset="(2 * Math.PI * 110) * (1 - (blockProgressPercent / 100))" 
+                    stroke-linecap="round" />
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-4xl font-mono font-bold" x-text="blockTimeRemainingStr"></span>
+            <span class="text-xs text-slate-400 mt-1">Remaining</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center max-w-xl mx-auto w-full glass-card p-4 rounded-2xl">
+        <button @click="toggleFocusMode()" class="px-4 py-2 rounded-xl bg-sky-500 text-white text-xs font-semibold">Exit Focus HUD</button>
+      </div>
+    </div>
+
+    <!-- MODAL: ADD TEST / EVENT -->
+    <div x-show="showEventModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="glass-card rounded-2xl max-w-md w-full p-6 space-y-4 border border-white/10 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h3 class="text-lg font-bold text-amber-400 flex items-center space-x-2">
+            <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+            <span>Schedule Test / Special Event</span>
+          </h3>
+          <button @click="showEventModal = false" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Date</label>
+            <input type="date" x-model="newEvent.date" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Event Title (e.g. Physics Exam Week)</label>
+            <input type="text" x-model="newEvent.title" placeholder="Title..." class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Start Time</label>
+              <input type="time" x-model="newEvent.startTime" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">End Time</label>
+              <input type="time" x-model="newEvent.endTime" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
+            </div>
+          </div>
+        </div>
+
+        <button @click="saveYearlyEvent()" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-lg">
+          Save to Annual Calendar
+        </button>
+      </div>
+    </div>
+
+    <!-- BACKUP & RESTORE MODAL -->
+    <div x-show="showDataModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="glass-card rounded-2xl max-w-lg w-full p-6 space-y-4 border border-white/10 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h3 class="text-lg font-bold flex items-center space-x-2"><i data-lucide="database" class="w-5 h-5 text-sky-400"></i><span>JSON Backup & Sync</span></h3>
+          <button @click="showDataModal = false" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <textarea x-model="jsonDataArea" placeholder="Paste JSON backup data here..." class="w-full h-32 bg-slate-900 border border-white/10 rounded-xl p-3 text-xs font-mono text-slate-200 outline-none"></textarea>
+        <div class="flex items-center justify-between gap-2">
+          <button @click="copyBackupJson()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-medium">Copy JSON</button>
+          <button @click="restoreFromJson()" class="px-4 py-2 rounded-xl bg-sky-500 text-white text-xs font-medium">Restore Data</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function annualRoutineApp() {
+      return {
+        activeMainTab: 'daily',
+        currentTheme: 'dark-glass',
+        focusMode: false,
+        showDataModal: false,
+        showEventModal: false,
+        jsonDataArea: '',
+        aiPromptInput: '',
+
+        currentTimeStr: '',
+        currentDateStr: '',
+        todayIsoString: new Date().toISOString().split('T')[0],
+        selectedIsoDate: new Date().toISOString().split('T')[0],
+
+        daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        selectedRecurringDayIdx: 0,
+
+        newEvent: { date: new Date().toISOString().split('T')[0], title: '', startTime: '09:00', endTime: '11:00', category: 'Test' },
+
+        recurringSchedules: [
+          [{ id: 1, startTime: '08:00', endTime: '15:20', title: 'School Routine', tasks: [{ text: 'Attend classes', completed: false }] },
+           { id: 2, startTime: '16:00', endTime: '17:30', title: 'Study Block', tasks: [] }],
+          [{ id: 3, startTime: '08:00', endTime: '15:20', title: 'School Routine', tasks: [] }],
+          [{ id: 4, startTime: '08:00', endTime: '14:30', title: 'School Routine', tasks: [] },
+           { id: 5, startTime: '19:00', endTime: '19:30', title: 'Piano Lesson', tasks: [] }],
+          [{ id: 6, startTime: '08:00', endTime: '15:20', title: 'School Routine', tasks: [] }],
+          [{ id: 7, startTime: '08:00', endTime: '15:20', title: 'School Routine', tasks: [] },
+           { id: 8, startTime: '17:45', endTime: '19:00', title: 'Football Practice', tasks: [] }],
+          [],
+          []
+        ],
+
+        yearlyEvents: [
+          { id: 101, date: '2026-10-28', startTime: '09:00', endTime: '11:30', title: 'Physics Test Week Exam', category: 'Exam', tasks: [{ text: 'Review kinematics', completed: false }] }
+        ],
+
+        activeBlock: null,
+        blockProgressPercent: 0,
+        blockTimeRemainingStr: '00:00',
+        studyStreakDays: 3,
+        timerDuration: 1500,
+        timerRemaining: 1500,
+        timerIsRunning: false,
+        timerInterval: null,
+
+        masterVolume: 0.6,
+        chimesEnabled: true,
+        audioCtx: null,
+        masterGain: null,
+        soundNodes: {},
+        activeSounds: { rain: false, ocean: false, wind: false, stream: false },
+        ambientSounds: {
+          rain: { label: 'Rain & Thunder', desc: 'Pink noise rumble', icon: 'cloud-rain' },
+          ocean: { label: 'Ocean Surf', desc: 'LFO swell wave synth', icon: 'waves' },
+          wind: { label: 'Forest Wind', desc: 'Resonant turbulence', icon: 'wind' },
+          stream: { label: 'Stream & Birds', desc: 'Water flow + chirps', icon: 'trees' }
+        },
+
+        initApp() {
+          this.loadSavedData();
+          this.updateTime();
+          setInterval(() => this.updateTime(), 1000);
+          this.refreshIcons();
+        },
+
+        refreshIcons() {
+          this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+        },
+
+        switchTab(tab) {
+          this.activeMainTab = tab;
+          this.refreshIcons();
+        },
+
+        updateTime() {
+          const now = new Date();
+          this.currentTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          this.currentDateStr = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+          this.todayIsoString = now.toISOString().split('T')[0];
+          this.calculateActiveBlock(now);
+        },
+
+        changeDate(delta) {
+          let d = new Date(this.selectedIsoDate);
+          d.setDate(d.getDate() + delta);
+          this.selectedIsoDate = d.toISOString().split('T')[0];
+        },
+
+        resetToToday() {
+          this.selectedIsoDate = this.todayIsoString;
+        },
+
+        jumpToDate(iso) {
+          this.selectedIsoDate = iso;
+          this.switchTab('daily');
+        },
+
+        getMergedDayBlocks() {
+          const jsDay = new Date(this.selectedIsoDate).getDay();
+          const dayIdx = jsDay === 0 ? 6 : jsDay - 1;
+
+          let recurring = (this.recurringSchedules[dayIdx] || []).map(b => ({ ...b, isSpecific: false }));
+          let specific = this.yearlyEvents.filter(e => e.date === this.selectedIsoDate).map(e => ({ ...e, isSpecific: true }));
+
+          return [...recurring, ...specific].sort((a, b) => a.startTime.localeCompare(b.startTime));
+        },
+
+        getSpecialEventsForSelectedDate() {
+          return this.yearlyEvents.filter(e => e.date === this.selectedIsoDate);
+        },
+
+        openAddEventModal() {
+          this.newEvent.date = this.selectedIsoDate;
+          this.showEventModal = true;
+        },
+
+        saveYearlyEvent() {
+          if (!this.newEvent.title) return;
+          this.yearlyEvents.push({
+            id: Date.now(),
+            date: this.newEvent.date,
+            startTime: this.newEvent.startTime,
+            endTime: this.newEvent.endTime,
+            title: this.newEvent.title,
+            category: 'Test / Event',
+            tasks: []
+          });
+          this.yearlyEvents.sort((a, b) => a.date.localeCompare(b.date));
+          this.saveSchedules();
+          this.showEventModal = false;
+          this.newEvent.title = '';
+          this.refreshIcons();
+        },
+
+        deleteYearlyEvent(id) {
+          this.yearlyEvents = this.yearlyEvents.filter(e => e.id !== id);
+          this.saveSchedules();
+        },
+
+        addRecurringBlock(dayIdx) {
+          this.recurringSchedules[dayIdx].push({ id: Date.now(), startTime: '12:00', endTime: '13:00', title: 'New Recurring Block', tasks: [] });
+          this.saveSchedules();
+          this.refreshIcons();
+        },
+
+        deleteRecurringBlock(dayIdx, id) {
+          this.recurringSchedules[dayIdx] = this.recurringSchedules[dayIdx].filter(b => b.id !== id);
+          this.saveSchedules();
+        },
+
+        processAiPrompt() {
+          const text = this.aiPromptInput.trim();
+          if (!text) return;
+          const timeRegex = /\b([0-9]{1,2}:[0-9]{2})\b/g;
+          const found = text.match(timeRegex);
+          let startTime = '09:00', endTime = '11:00';
+          if (found && found.length >= 2) {
+            startTime = found[0].padStart(5, '0');
+            endTime = found[1].padStart(5, '0');
+          }
+          let title = text.replace(timeRegex, '').replace(/\b(on|at|exam|test|with|task)\b/gi, '').trim();
+          if (!title) title = 'Special Scheduled Test';
+
+          this.yearlyEvents.push({
+            id: Date.now(),
+            date: this.selectedIsoDate,
+            startTime,
+            endTime,
+            title,
+            category: 'AI Event',
+            tasks: []
+          });
+          this.aiPromptInput = '';
+          this.saveSchedules();
+          this.refreshIcons();
+        },
+
+        calculateActiveBlock(now) {
+          if (this.selectedIsoDate !== this.todayIsoString) {
+            this.activeBlock = null;
+            return;
+          }
+          const blocks = this.getMergedDayBlocks();
+          const nowMins = now.getHours() * 60 + now.getMinutes();
+          const nowSecs = nowMins * 60 + now.getSeconds();
+          let found = null;
+
+          for (let b of blocks) {
+            const [sH, sM] = b.startTime.split(':').map(Number);
+            const [eH, eM] = b.endTime.split(':').map(Number);
+            const startM = sH * 60 + sM, endM = eH * 60 + eM;
+            if (nowMins >= startM && nowMins < endM) {
+              found = b;
+              const totalSecs = (endM - startM) * 60;
+              const elapsedSecs = nowSecs - (startM * 60);
+              this.blockProgressPercent = Math.min(100, Math.max(0, Math.round((elapsedSecs / totalSecs) * 100)));
+              const remSecs = (endM * 60) - nowSecs;
+              const rm = Math.floor(remSecs / 60), rs = remSecs % 60;
+              this.blockTimeRemainingStr = `${String(rm).padStart(2, '0')}:${String(rs).padStart(2, '0')}`;
+              break;
+            }
+          }
+          this.activeBlock = found;
+        },
+
+        deleteBlockItem(block) {
+          if (block.isSpecific) {
+            this.yearlyEvents = this.yearlyEvents.filter(e => e.id !== block.id);
+          } else {
+            for (let i = 0; i < this.recurringSchedules.length; i++) {
+              this.recurringSchedules[i] = this.recurringSchedules[i].filter(b => b.id !== block.id);
+            }
+          }
+          this.saveSchedules();
+        },
+
+        addTaskToBlock(block) {
+          if (!block.tasks) block.tasks = [];
+          block.tasks.push({ text: 'New task', completed: false });
+          this.saveSchedules();
+          this.refreshIcons();
+        },
+
+        toggleTask(blockId, taskIdx) {
+          if (this.activeBlock && this.activeBlock.tasks[taskIdx]) {
+            this.activeBlock.tasks[taskIdx].completed = !this.activeBlock.tasks[taskIdx].completed;
+            this.saveSchedules();
+          }
+        },
+
+        toggleTaskItem(block, tIdx) {
+          block.tasks[tIdx].completed = !block.tasks[tIdx].completed;
+          this.saveSchedules();
+        },
+
+        getScheduledHoursToday() {
+          let blocks = this.getMergedDayBlocks();
+          let mins = 0;
+          blocks.forEach(b => {
+            const [sH, sM] = b.startTime.split(':').map(Number);
+            const [eH, eM] = b.endTime.split(':').map(Number);
+            mins += (eH * 60 + eM) - (sH * 60 + sM);
+          });
+          return (mins / 60).toFixed(1);
+        },
+
+        getCompletedTaskCount() {
+          let count = 0;
+          this.yearlyEvents.forEach(e => { if (e.tasks) count += e.tasks.filter(t => t.completed).length; });
+          this.recurringSchedules.forEach(day => day.forEach(b => { if (b.tasks) count += b.tasks.filter(t => t.completed).length; }));
+          return count;
+        },
+
+        getTaskCompletionPercentage() {
+          let total = 0, completed = 0;
+          this.yearlyEvents.forEach(e => { if (e.tasks) { total += e.tasks.length; completed += e.tasks.filter(t => t.completed).length; } });
+          this.recurringSchedules.forEach(day => day.forEach(b => { if (b.tasks) { total += b.tasks.length; completed += b.tasks.filter(t => t.completed).length; } }));
+          return total === 0 ? 0 : Math.round((completed / total) * 100);
+        },
+
+        adjustCustomDuration(mins) {
+          let m = Math.round(this.timerDuration / 60) + mins;
+          if (m < 1) m = 1;
+          this.timerDuration = m * 60;
+          this.resetTimer();
+        },
+
+        toggleTimer() {
+          this.timerIsRunning = !this.timerIsRunning;
+          if (this.timerIsRunning) {
+            this.timerInterval = setInterval(() => {
+              if (this.timerRemaining > 0) this.timerRemaining--;
+              else { this.timerIsRunning = false; clearInterval(this.timerInterval); if (this.chimesEnabled) this.playChime(659.25, 'sine'); }
+            }, 1000);
+          } else { clearInterval(this.timerInterval); }
+        },
+
+        resetTimer() {
+          this.timerIsRunning = false;
+          clearInterval(this.timerInterval);
+          this.timerRemaining = this.timerDuration;
+        },
+
+        get timerPercent() { return Math.round(((this.timerDuration - this.timerRemaining) / this.timerDuration) * 100); },
+        get timerDisplayStr() {
+          const m = Math.floor(this.timerRemaining / 60), s = this.timerRemaining % 60;
+          return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        },
+
+        toggleFocusMode() { this.focusMode = !this.focusMode; this.refreshIcons(); },
+
+        initAudio() {
+          if (!this.audioCtx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            this.audioCtx = new AC();
+            this.masterGain = this.audioCtx.createGain();
+            this.masterGain.gain.setValueAtTime(this.masterVolume, this.audioCtx.currentTime);
+            this.masterGain.connect(this.audioCtx.destination);
+          }
+          if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+        },
+
+        updateMasterVolume() {
+          if (this.masterGain && this.audioCtx) this.masterGain.gain.setValueAtTime(this.masterVolume, this.audioCtx.currentTime);
+          this.saveSettings();
+        },
+
+        toggleSound(type) {
+          this.initAudio();
+          this.activeSounds[type] = !this.activeSounds[type];
+          if (this.activeSounds[type]) this.startProceduralSound(type);
+          else this.stopProceduralSound(type);
+        },
+
+        startProceduralSound(type) {
+          const ctx = this.audioCtx;
+          const bufferSize = ctx.sampleRate * 2;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+          noise.loop = true;
+          const filter = ctx.createBiquadFilter();
+          filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
+          filter.frequency.setValueAtTime(type === 'rain' ? 800 : 400, ctx.currentTime);
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          noise.connect(filter); filter.connect(gain); gain.connect(this.masterGain);
+          noise.start();
+          this.soundNodes[type] = { source: noise, gain: gain };
+        },
+
+        stopProceduralSound(type) {
+          if (this.soundNodes[type]) {
+            if (this.soundNodes[type].source) this.soundNodes[type].source.stop();
+            delete this.soundNodes[type];
+          }
+        },
+
+        playChime(freq = 523.25, type = 'sine') {
+          this.initAudio();
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 1.5);
+          osc.connect(gain); gain.connect(this.masterGain);
+          osc.start(); osc.stop(this.audioCtx.currentTime + 1.5);
+        },
+
+        copyBackupJson() {
+          const fullData = { recurringSchedules: this.recurringSchedules, yearlyEvents: this.yearlyEvents, theme: this.currentTheme };
+          this.jsonDataArea = JSON.stringify(fullData, null, 2);
+          navigator.clipboard.writeText(this.jsonDataArea);
+          alert("Backup JSON copied to clipboard!");
+        },
+
+        restoreFromJson() {
+          try {
+            const parsed = JSON.parse(this.jsonDataArea);
+            if (parsed.recurringSchedules) this.recurringSchedules = parsed.recurringSchedules;
+            if (parsed.yearlyEvents) this.yearlyEvents = parsed.yearlyEvents;
+            if (parsed.theme) this.currentTheme = parsed.theme;
+            this.saveSchedules();
+            this.showDataModal = false;
+            alert("Data successfully restored!");
+          } catch(e) { alert("Invalid JSON format."); }
+        },
+
+        exportCalendar() {
+          let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Annual Routine Portal//EN\n";
+          this.yearlyEvents.forEach(e => {
+            ics += "BEGIN:VEVENT\n";
+            ics += `SUMMARY:${e.title}\n`;
+            ics += `DESCRIPTION:${e.category}\n`;
+            ics += "END:VEVENT\n";
+          });
+          ics += "END:VCALENDAR";
+          const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8;' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute('download', 'academic-calendar.ics');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        },
+
+        formatEventMonth(iso) { return new Date(iso).toLocaleDateString([], { month: 'short' }); },
+        formatEventDay(iso) { return new Date(iso).getDate(); },
+
+        saveSchedules() {
+          localStorage.setItem('routine_recurring', JSON.stringify(this.recurringSchedules));
+          localStorage.setItem('routine_yearly_events', JSON.stringify(this.yearlyEvents));
+        },
+
+        saveSettings() {
+          localStorage.setItem('routine_theme', this.currentTheme);
+        },
+
+        loadSavedData() {
+          const r = localStorage.getItem('routine_recurring');
+          if (r) this.recurringSchedules = JSON.parse(r);
+          const y = localStorage.getItem('routine_yearly_events');
+          if (y) this.yearlyEvents = JSON.parse(y);
+          const t = localStorage.getItem('routine_theme');
+          if (t) this.currentTheme = t;
+          this.timerRemaining = this.timerDuration;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
